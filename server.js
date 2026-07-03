@@ -14,7 +14,22 @@ require("./config/connect")();
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 })); // 2. Protection des en-têtes HTTP contre les failles de sécurité
-app.use(cors({ origin: "http://localhost:4200" })); // 3. Meilleure pratique : restreindre l'accès au frontend Angular uniquement
+
+// AJOUT : liste des origines autorisées (local + prod Vercel)
+const allowedOrigins = [
+  "http://localhost:4200",
+  "https://cyber-park-hr.vercel.app"
+];
+app.use(cors({
+  origin: function (origin, callback) {
+    // AJOUT : autorise les requêtes sans origin (ex: Postman) et celles dans la liste
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  }
+})); // 3. Meilleure pratique : restreindre l'accès au frontend Angular uniquement
 app.use(express.json({ limit: "10kb" }));
 
 // Uploads
