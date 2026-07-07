@@ -15,6 +15,24 @@ exports.createDepartment = async (req, res) => {
     });
 
     await newDepartment.save();
+
+    // AJOUT : synchronisation du departmentId des employés concernés
+    // (les membres ET le responsable reçoivent bien l'ID du département)
+    const idsToSync = new Set();
+    if (Array.isArray(membres)) {
+      membres.forEach((m) => idsToSync.add(String(m)));
+    }
+    if (managerId) {
+      idsToSync.add(String(managerId));
+    }
+
+    if (idsToSync.size > 0) {
+      await Employee.updateMany(
+        { _id: { $in: Array.from(idsToSync) } },
+        { $set: { departmentId: newDepartment._id } }
+      );
+    }
+
     return res.status(201).json({ success: true, message: "Département créé avec succès !", data: newDepartment });
   } catch (error) {
     // Gestion du nom dupliqué (unique: true)
@@ -67,6 +85,14 @@ exports.updateDepartment = async (req, res) => {
     // AJOUT : on récupère "membres" envoyé par le formulaire Angular
     const { name, description, managerId, membres } = req.body;
 
+    // AJOUT : on récupère l'état AVANT modification pour savoir qui retirer
+    const existingDepartment = await Department.findById(id);
+    if (!existingDepartment) {
+      return res.status(404).json({ success: false, message: "Département introuvable." });
+    }
+    const oldMembreIds = (existingDepartment.membres || []).map((m) => String(m));
+    const oldManagerId = existingDepartment.managerId ? String(existingDepartment.managerId) : null;
+
     const updatedDepartment = await Department.findByIdAndUpdate(
       id,
       {
@@ -84,6 +110,36 @@ exports.updateDepartment = async (req, res) => {
 
     if (!updatedDepartment) {
       return res.status(404).json({ success: false, message: "Département introuvable." });
+    }
+
+    // AJOUT : synchronisation du departmentId des employés (membres + responsable)
+    // -> Les nouveaux membres/responsable reçoivent l'ID du département
+    // -> Ceux qui ont été retirés (et qui n'ont pas d'autre raison de le garder) repassent à null
+    const newMembreIds = (Array.isArray(membres) ? membres : oldMembreIds).map((m) => String(m));
+    const newManagerId = managerId ? String(managerId) : null;
+
+    const newIdsSet = new Set(newMembreIds);
+    if (newManagerId) newIdsSet.add(newManagerId);
+
+    const oldIdsSet = new Set(oldMembreIds);
+    if (oldManagerId) oldIdsSet.add(oldManagerId);
+
+    // Employés à AJOUTER (nouveaux membres/responsable) -> departmentId = ce département
+    const idsToAdd = Array.from(newIdsSet);
+    if (idsToAdd.length > 0) {
+      await Employee.updateMany(
+        { _id: { $in: idsToAdd } },
+        { $set: { departmentId: updatedDepartment._id } }
+      );
+    }
+
+    // Employés à RETIRER (présents avant, absents maintenant) -> departmentId = null
+    const idsToRemove = Array.from(oldIdsSet).filter((oldId) => !newIdsSet.has(oldId));
+    if (idsToRemove.length > 0) {
+      await Employee.updateMany(
+        { _id: { $in: idsToRemove }, departmentId: updatedDepartment._id },
+        { $set: { departmentId: null } }
+      );
     }
 
     return res.status(200).json({
