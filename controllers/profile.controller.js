@@ -2,6 +2,7 @@ const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
+const sendEmail = require('../utils/mailer'); // AJOUT : utilitaire d'envoi d'email
 
 // 📥 1. RÉCUPÉRER LE PROFIL CONNECTÉ
 exports.getProfile = async (req, res) => {
@@ -63,6 +64,23 @@ exports.updatePassword = async (req, res) => {
 
     user.password = newPassword;
     await user.save();
+
+    // AJOUT : envoi d'un email de confirmation après changement de mot de passe réussi
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: 'Votre mot de passe a été modifié - Cyber Park HR',
+        html: `
+          <h2>Mot de passe modifié</h2>
+          <p>Bonjour ${user.firstName},</p>
+          <p>Votre mot de passe a été modifié avec succès depuis votre profil.</p>
+          <p>Si vous n'êtes pas à l'origine de cette action, contactez immédiatement un administrateur.</p>
+        `
+      });
+    } catch (emailError) {
+      // AJOUT : on ne bloque pas la réponse si l'email échoue, on log juste l'erreur
+      console.error('Erreur envoi email de confirmation:', emailError.message);
+    }
 
     res.status(200).json({ success: true, message: 'Mot de passe modifié avec succès !' });
   } catch (error) {

@@ -20,7 +20,8 @@ const user = new mongoose.Schema(
     },
     password: { 
         type: String, 
-        required: [true, "Le mot de passe est requis"], 
+        // AJOUT : le mot de passe n'est requis QUE pour les comptes classiques (pas Google)
+        required: function () { return this.authProvider === 'local'; },
         minlength: 6, 
         select: false },
     role: { 
@@ -38,27 +39,31 @@ const user = new mongoose.Schema(
         type: String, 
         trim: true },
     
-    // Relations
     departmentId: { type: mongoose.Schema.Types.ObjectId, ref: "Department", default: null },
     
-    // Informations professionnelles
     jobTitle: { type: String, trim: true },
     salary: { type: Number, default: 0 },
-    joinDate: { type: Date, default: Date.now }
+    joinDate: { type: Date, default: Date.now },
+
+    resetPasswordToken: { type: String, select: false },
+    resetPasswordExpire: { type: Date, select: false },
+
+    // AJOUT : gestion de l'authentification Google via Firebase
+    authProvider: { type: String, enum: ["local", "google"], default: "local" },
+    googleId: { type: String, default: null, select: false }
   },
   { timestamps: true }
 );
 
-// Sécurité : Hashage du mot de passe avant sauvegarde
 user.pre("save", async function () {
-  if (!this.isModified("password")) return;
+  // AJOUT : si pas de mot de passe (compte Google), on ne hash rien
+  if (!this.password || !this.isModified("password")) return;
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
-// Méthode personnalisée pour comparer les mots de passe lors du Login
+
 user.methods.comparePassword = async function (candidatePassword) {
-  // "this.password" correspond au mot de passe hashé récupéré en BDD
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
