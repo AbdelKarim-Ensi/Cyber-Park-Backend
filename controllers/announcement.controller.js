@@ -107,7 +107,7 @@ exports.updateAnnouncement = async (req, res) => {
     const updatedAnnouncement = await Announcement.findByIdAndUpdate(
       id,
       { title, content, target, image },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     if (!updatedAnnouncement) {

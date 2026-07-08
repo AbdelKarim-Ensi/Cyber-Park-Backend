@@ -59,7 +59,7 @@ exports.processAdvance = async (req, res) => {
         status,
         processedBy: req.user._id // L'admin connecté qui valide
       },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     ).populate("employeeId", "firstName lastName");
 
     if (!advance) {

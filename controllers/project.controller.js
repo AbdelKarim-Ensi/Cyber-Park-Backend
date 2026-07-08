@@ -69,7 +69,7 @@ exports.updateProject = async (req, res) => {
     const updatedProject = await Project.findByIdAndUpdate(
       id,
       updateData, // On passe l'objet nettoyé et sécurisé
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     ).populate("assignedEmployees", "fullName firstName lastName role"); 
     // 🛠️ FIX 3 : Ajout de fullName et role pour correspondre à votre Angular !
 

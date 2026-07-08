@@ -104,7 +104,7 @@ exports.updateDepartment = async (req, res) => {
         // à la valeur existante ; s'il est envoyé (même vide []), on l'applique.
         ...(membres !== undefined ? { membres: Array.isArray(membres) ? membres : [] } : {})
       },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     ).populate('managerId', 'firstName lastName')
      .populate('membres', 'firstName lastName email');
 
@@ -127,7 +127,7 @@ exports.updateDepartment = async (req, res) => {
     // Employés à AJOUTER (nouveaux membres/responsable) -> departmentId = ce département
     const idsToAdd = Array.from(newIdsSet);
     if (idsToAdd.length > 0) {
-      await Employee.updateMany(
+      await Employee.updateMany( 
         { _id: { $in: idsToAdd } },
         { $set: { departmentId: updatedDepartment._id } }
       );

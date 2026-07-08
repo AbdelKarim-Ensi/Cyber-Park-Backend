@@ -49,7 +49,7 @@ app.use("/", apiLimiter);
 // rate limiting pour le route /auth/login et /auth/register
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // 10 tentatives de login/register max par IP
+  max: 100, // 10 tentatives de login/register max par IP
   message: "Trop de tentatives de connexion, réessayez dans 15 minutes.",
   standardHeaders: true,
   legacyHeaders: false,

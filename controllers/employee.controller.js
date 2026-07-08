@@ -1,5 +1,5 @@
 const User = require("../models/user.model");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const mongoose = require('mongoose');
 
 // 1️⃣ [ADMIN] Récupérer tous les employés

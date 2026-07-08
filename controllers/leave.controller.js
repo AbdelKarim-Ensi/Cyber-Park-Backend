@@ -3,11 +3,14 @@ const Leave = require("../models/leave.model"); // Ton modèle Mongoose
 // 1. [EMPLOYÉ] Soumettre une demande de congé
 exports.createLeaveRequest = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) { // AJOUT : garde-fou
+      return res.status(401).json({ success: false, message: "Non authentifié." });
+    }
+
     const { type, startDate, endDate, reason } = req.body;
 
-    // Le statut sera "PENDING" par défaut grâce à ton modèle
     const newLeave = new Leave({
-      employeeId: req.user._id, // ID de l'employé connecté
+      employeeId: req.user._id,
       type,
       startDate,
       endDate,
@@ -17,6 +20,12 @@ exports.createLeaveRequest = async (req, res) => {
     await newLeave.save();
     return res.status(201).json({ success: true, message: "Demande de congé soumise.", data: newLeave });
   } catch (error) {
+    if (error.name === "ValidationError") { // AJOUT : erreur de validation = 400, pas 500
+      // Log full error for debugging in test runs
+      console.error(error);
+      return res.status(400).json({ success: false, message: error.message });
+    }
+    console.error("Erreur createLeaveRequest:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };

@@ -27,7 +27,7 @@ exports.register = async (req, res) => {
       lastName,
       email,
       password,
-      role
+      role: "EMPLOYEE" // Par défaut, tous les nouveaux utilisateurs sont des employés
     });
 
     const token = generateToken(user._id);

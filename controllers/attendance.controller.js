@@ -172,7 +172,7 @@ const updateAttendance = async (req, res) => {
       }
     }
 
-    const updated = await Attendance.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    const updated = await Attendance.findByIdAndUpdate(req.params.id, updateData,{ returnDocument: 'after' });
     return res.status(200).json({ success: true, data: updated });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
