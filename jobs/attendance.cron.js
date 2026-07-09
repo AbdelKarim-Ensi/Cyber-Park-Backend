@@ -27,6 +27,25 @@ async function resetOldAttendance() {
   }
 }
 
+// 🎯 AJOUT : suppression définitive basée sur un délai glissant de 24h
+// (contrairement à resetOldAttendance qui se base sur minuit, ici on calcule
+// exactement 24h à partir du moment présent, peu importe l'heure de création).
+async function resetAttendanceOlderThan24h() {
+  try {
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const result = await Attendance.deleteMany({
+      date: { $lt: twentyFourHoursAgo }
+    });
+
+    console.log(
+      `🧹 [CRON Présences 24h] ${result.deletedCount} enregistrement(s) de présence de plus de 24h supprimés définitivement.`
+    );
+  } catch (error) {
+    console.error("❌ [CRON Présences 24h] Erreur lors du nettoyage automatique :", error.message);
+  }
+}
+
 /**
  * Démarre la tâche planifiée : s'exécute tous les jours à 00:00 (minuit),
  * heure du serveur.
@@ -38,7 +57,15 @@ function startAttendanceResetJob() {
     resetOldAttendance();
   });
 
+  // 🎯 AJOUT : tâche planifiée qui tourne toutes les heures pour vérifier
+  // et supprimer définitivement les présences ayant dépassé 24h d'existence.
+  cron.schedule("0 * * * *", () => {
+    console.log("⏰ [CRON Présences 24h] Vérification des enregistrements de plus de 24h...");
+    resetAttendanceOlderThan24h();
+  });
+
   console.log("✅ [CRON Présences] Tâche planifiée initialisée (reset quotidien à minuit).");
+  console.log("✅ [CRON Présences 24h] Tâche planifiée initialisée (vérification horaire, suppression définitive après 24h).");
 }
 
-module.exports = { startAttendanceResetJob, resetOldAttendance };
+module.exports = { startAttendanceResetJob, resetOldAttendance, resetAttendanceOlderThan24h };

@@ -86,7 +86,13 @@ app.use('/uploads', express.static('uploads'));
 
 // Déclaration de la route du profil
 app.use('/profil', require('./routes/profile.routes'));
+//chatbot
+const chatbotRoutes = require("./routes/chatbot.routes");
+app.use("/chatbot", chatbotRoutes);
 
+app.get("/test-chatbot-alive", (req, res) => {
+  res.json({ ok: true });
+});
 // 🎯 AJOUT : démarrage de la tâche planifiée qui vide automatiquement
 // la liste des présences des jours précédents chaque nuit à minuit.
 const { startAttendanceResetJob } = require("./jobs/attendance.cron");
