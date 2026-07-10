@@ -35,27 +35,27 @@ app.use(cors({
 })); // 3. Meilleure pratique : restreindre l'accès au frontend Angular uniquement
 app.use(express.json({ limit: "10kb" }));
 
-// rate limiting global
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limite chaque IP à 100 requêtes par fenêtre
-  message: "Trop de requêtes provenant de cette IP, veuillez réessayer après 15 minutes.",
-  standardHeaders: true, // Retourne les informations de limite dans les en-têtes `RateLimit-*`
-  legacyHeaders: false, // Désactive les en-têtes `X-RateLimit-*`
-});
-// CORRECTION : app.use("/") au lieu de "/api/" car aucune route ne commence par /api/
-app.use("/", apiLimiter);
+// // rate limiting global
+// const apiLimiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // limite chaque IP à 100 requêtes par fenêtre
+//   message: "Trop de requêtes provenant de cette IP, veuillez réessayer après 15 minutes.",
+//   standardHeaders: true, // Retourne les informations de limite dans les en-têtes `RateLimit-*`
+//   legacyHeaders: false, // Désactive les en-têtes `X-RateLimit-*`
+// });
+// // CORRECTION : app.use("/") au lieu de "/api/" car aucune route ne commence par /api/
+// app.use("/", apiLimiter);
 
-// rate limiting pour le route /auth/login et /auth/register
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 10 tentatives de login/register max par IP
-  message: "Trop de tentatives de connexion, réessayez dans 15 minutes.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use("/auth/login", authLimiter); // Applique le rate limiter à la route de login
-app.use("/auth/register", authLimiter); // AJOUT : applique aussi sur register
+// // rate limiting pour le route /auth/login et /auth/register
+// const authLimiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // 10 tentatives de login/register max par IP
+//   message: "Trop de tentatives de connexion, réessayez dans 15 minutes.",
+//   standardHeaders: true,
+//   legacyHeaders: false,
+// });
+// app.use("/auth/login", authLimiter); // Applique le rate limiter à la route de login
+// app.use("/auth/register", authLimiter); // AJOUT : applique aussi sur register
 
 // protection contre pollution de requêtes
 app.use(hpp())

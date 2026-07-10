@@ -147,7 +147,7 @@ exports.getAllAdvances = async (req, res) => {
   try {
     // On récupère toutes les demandes en y joignant (populate) les infos de l'employé
     const advances = await SalaryAdvance.find()
-      .populate("employeeId", "firstName lastName email department")
+      .populate("employeeId", "firstName lastName email departmentId")
       .sort({ createdAt: -1 }); // Les plus récentes en premier
 
     return res.status(200).json({ success: true, data: advances });
@@ -182,7 +182,7 @@ exports.getAdvanceById = async (req, res) => {
     const userRole = req.user.role;
 
     const advance = await SalaryAdvance.findById(advanceId)
-      .populate("employeeId", "firstName lastName email department");
+      .populate("employeeId", "firstName lastName email departmentId");
 
     if (!advance) {
       return res.status(404).json({ success: false, message: "Demande d'avance introuvable." });

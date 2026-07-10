@@ -1,14 +1,16 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const mongoose = require('mongoose');
+const sendEmail = require("../utils/mailer");
+const { isDomainAllowed, ALLOWED_EMPLOYEE_DOMAINS } = require("../config/authConfig");
 
 // 1️⃣ [ADMIN] Récupérer tous les employés
 exports.getAllEmployees = async (req, res) => {
   try {
-    // populate() charge le nom du département attaché
     const employees = await User.find({ role: { $ne: "ADMIN" } })
-      .populate("departmentId", "name"); 
-    
+      .populate("departmentId", "name");
+
     return res.status(200).json({
       success: true,
       count: employees.length,
@@ -29,21 +31,26 @@ exports.updateEmployee = async (req, res) => {
       return res.status(404).json({ success: false, message: "Employé introuvable." });
     }
 
-    // Mises à jour de base
+    // AJOUT : si l'email change, revérifier le domaine autorisé
+    if (email && email !== employee.email && !isDomainAllowed(email)) {
+      return res.status(400).json({
+        success: false,
+        message: `L'email doit appartenir au domaine ${ALLOWED_EMPLOYEE_DOMAINS.join(", ")}.`
+      });
+    }
+
     if (firstName) employee.firstName = firstName;
     if (lastName) employee.lastName = lastName;
     if (email) employee.email = email;
     if (status) employee.status = status;
     if (role) employee.role = role;
 
-    // Mises à jour professionnelles
     if (departmentId !== undefined) employee.departmentId = departmentId || null;
     if (jobTitle) employee.jobTitle = jobTitle;
     if (salary !== undefined) employee.salary = salary;
 
     await employee.save();
 
-    // Re-charger le département pour renvoyer une réponse propre au front-end
     const updatedEmployee = await User.findById(employee._id).populate("departmentId", "name");
 
     return res.status(200).json({
@@ -59,6 +66,11 @@ exports.updateEmployee = async (req, res) => {
 // 3️⃣ [ADMIN] Supprimer un employé
 exports.deleteEmployee = async (req, res) => {
   try {
+    // AJOUT : un admin ne peut pas se supprimer lui-même par erreur via cette route
+    if (req.params.id === String(req.user._id)) {
+      return res.status(400).json({ success: false, message: "Vous ne pouvez pas supprimer votre propre compte." });
+    }
+
     const employee = await User.findByIdAndDelete(req.params.id);
     if (!employee) {
       return res.status(404).json({ success: false, message: "Employé introuvable." });
@@ -73,39 +85,80 @@ exports.deleteEmployee = async (req, res) => {
   }
 };
 
-// 4️⃣ [ADMIN] Ajouter un employé
-// 4️⃣ [ADMIN] Ajouter un employé
+// 4️⃣ [ADMIN] Ajouter un employé — mot de passe temporaire généré + envoyé par email
 exports.addEmployee = async (req, res) => {
   try {
     const { firstName, lastName, email, role, department, hireDate, status } = req.body;
 
-    const hashedPassword = await bcrypt.hash('CyberPark123!', 10);
+    if (!firstName || !lastName || !email) {
+      return res.status(400).json({ success: false, message: "Prénom, nom et email sont requis." });
+    }
+
+    // AJOUT : email doit être du domaine entreprise
+    if (!isDomainAllowed(email)) {
+      return res.status(400).json({
+        success: false,
+        message: `L'email doit appartenir au domaine ${ALLOWED_EMPLOYEE_DOMAINS.join(", ")}.`
+      });
+    }
+
+    const existing = await User.findOne({ email: email.toLowerCase() });
+    if (existing) {
+      return res.status(400).json({ success: false, message: "Cet email est déjà utilisé." });
+    }
+
+    // AJOUT : mot de passe temporaire aléatoire — laissé EN CLAIR ici,
+    // le hook pre("save") du modèle User se charge de le hasher une seule fois.
+    const tempPassword = crypto.randomBytes(9).toString("base64").replace(/[+/=]/g, "");
 
     const safeDepartmentId = mongoose.Types.ObjectId.isValid(department) ? department : null;
-
-    // ✅ FIX Bug 1 : accepter 'ACTIVE', 'actif', et tout autre cas → INACTIVE
     const normalizedStatus = (status === 'ACTIVE' || status === 'actif') ? 'ACTIVE' : 'INACTIVE';
 
     const newUser = new User({
       firstName,
       lastName,
-      email,
-      password: hashedPassword,
-      role: 'EMPLOYEE',
+      email: email.toLowerCase(),
+      password: tempPassword, // en clair, hashé automatiquement au .save()
+      authProvider: "local",
+      role: 'EMPLOYEE', // ⚠️ toujours EMPLOYEE ici — la création d'ADMIN se fait par script séparé, jamais via cette route
       position: role,
       departmentId: safeDepartmentId,
       joinDate: hireDate,
       status: normalizedStatus,
-      salary: 0,
+      salary: 500,
       avatar: 'default-avatar.png'
     });
 
     await newUser.save();
-    return res.status(201).json({ message: 'Employé ajouté avec succès', user: newUser });
+
+    // AJOUT : envoi du mot de passe temporaire par email (best-effort, ne bloque pas la réponse)
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:4200";
+    const html = `
+      <h2>Bienvenue chez Cyber Park HR</h2>
+      <p>Bonjour ${firstName},</p>
+      <p>Un compte a été créé pour vous sur l'espace RH Cyber Park.</p>
+      <p><strong>Email :</strong> ${email.toLowerCase()}<br/>
+         <strong>Mot de passe temporaire :</strong> ${tempPassword}</p>
+      <p>Connectez-vous ici puis changez votre mot de passe dès que possible : <a href="${frontendUrl}/login">${frontendUrl}/login</a></p>
+      <p>Vous pouvez aussi vous connecter directement avec votre compte Google professionnel.</p>
+    `;
+
+    sendEmail({
+      to: email.toLowerCase(),
+      subject: "Votre accès à Cyber Park HR",
+      html
+    }).catch((emailError) => {
+      console.error("Erreur envoi email de bienvenue:", emailError.message);
+    });
+
+    const safeUser = newUser.toObject();
+    delete safeUser.password;
+
+    return res.status(201).json({ success: true, message: 'Employé ajouté avec succès, identifiants envoyés par email.', user: safeUser });
 
   } catch (error) {
     console.error("Erreur Backend complète :", error);
-    return res.status(500).json({ message: 'Erreur lors de la création', error: error.message });
+    return res.status(500).json({ success: false, message: 'Erreur lors de la création', error: error.message });
   }
 };
 
@@ -114,7 +167,6 @@ exports.getEmployeeById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 1️⃣ Sécurité : Vérifier si l'ID passé est un ObjectId MongoDB valide
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -122,10 +174,8 @@ exports.getEmployeeById = async (req, res) => {
       });
     }
 
-    // 2️⃣ CORRECTION : Utilisation du modèle 'User' unifié + .populate() pour récupérer le département
     const employee = await User.findById(id).populate("departmentId", "name");
 
-    // 3️⃣ Si l'employé n'existe pas
     if (!employee) {
       return res.status(404).json({
         success: false,
@@ -133,7 +183,6 @@ exports.getEmployeeById = async (req, res) => {
       });
     }
 
-    // 4️⃣ Envoi de la réponse structurée avec la propriété 'data' lue par ton Angular
     return res.status(200).json({
       success: true,
       data: employee
@@ -148,8 +197,8 @@ exports.getEmployeeById = async (req, res) => {
     });
   }
 };
-// 6️⃣ AJOUT: [TOUS UTILISATEURS CONNECTÉS] Récupérer le profil de l'utilisateur connecté
-// Sécurisé : utilise req.user._id (fourni par le middleware protect), jamais un id arbitraire du client
+
+// 6️⃣ [TOUS UTILISATEURS CONNECTÉS] Récupérer le profil de l'utilisateur connecté
 exports.getMyProfile = async (req, res) => {
   try {
     const userId = req.user._id;

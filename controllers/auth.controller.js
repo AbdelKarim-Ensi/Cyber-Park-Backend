@@ -2,7 +2,8 @@ const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sendEmail = require("../utils/mailer");
-const adminAuth = require("../config/firebase-admin"); // AJOUT : vérification des tokens Google
+const adminAuth = require("../config/firebase-admin");
+const { isDomainAllowed } = require("../config/authConfig");
 
 const generateToken = (id) => {
   const secret = process.env.JWT_SECRET || "fallback_secret_key_look_at_your_env_file";
@@ -11,45 +12,19 @@ const generateToken = (id) => {
   });
 };
 
-// @desc    Inscription d'un nouvel utilisateur
-// @route   POST /auth/register
+// ⚠️ SUPPRIMÉ : plus d'auto-inscription publique pour l'EMS.
+// Les comptes EMPLOYEE/ADMIN sont créés uniquement par un admin
+// via POST /api/employees (voir employee.controller.js).
+// Cette route reste désactivée volontairement (410 Gone) pour éviter
+// que d'anciens appels frontend cassent silencieusement.
 exports.register = async (req, res) => {
-  try {
-    const { firstName, lastName, email, password, role } = req.body;
-
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ success: false, message: "Cet email est déjà utilisé." });
-    }
-
-    const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      password,
-      role: "EMPLOYEE" // Par défaut, tous les nouveaux utilisateurs sont des employés
-    });
-
-    const token = generateToken(user._id);
-
-    return res.status(201).json({
-      success: true,
-      message: "Utilisateur créé avec succès.",
-      token,
-      data: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role
-      }
-    });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
-  }
+  return res.status(410).json({
+    success: false,
+    message: "L'inscription publique est désactivée. Contactez un administrateur pour obtenir un compte."
+  });
 };
 
-// @desc    Connexion de l'utilisateur
+// @desc    Connexion de l'utilisateur (email/password)
 // @route   POST /auth/login
 exports.login = async (req, res) => {
   try {
@@ -59,14 +34,29 @@ exports.login = async (req, res) => {
       return res.status(400).json({ success: false, message: "Veuillez fournir un email et un mot de passe." });
     }
 
+    if (!isDomainAllowed(email)) {
+      return res.status(403).json({ success: false, message: "Domaine email non autorisé pour cet espace." });
+    }
+
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
       return res.status(401).json({ success: false, message: "Identifiants incorrects." });
     }
 
+    if (user.authProvider !== "local" || !user.password) {
+      return res.status(400).json({
+        success: false,
+        message: "Ce compte utilise la connexion Google. Utilisez le bouton 'Se connecter avec Google'."
+      });
+    }
+
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: "Identifiants incorrects." });
+    }
+
+    if (user.status === "INACTIVE") {
+      return res.status(403).json({ success: false, message: "Compte désactivé. Contactez un administrateur." });
     }
 
     const token = generateToken(user._id);
@@ -100,6 +90,13 @@ exports.forgotPassword = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
+      return res.status(200).json({
+        success: true,
+        message: "Si cet email existe, un lien de réinitialisation a été envoyé."
+      });
+    }
+
+    if (user.authProvider !== "local") {
       return res.status(200).json({
         success: true,
         message: "Si cet email existe, un lien de réinitialisation a été envoyé."
@@ -203,45 +200,53 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// AJOUT : @desc    Connexion / inscription via Google (Firebase Auth)
-// AJOUT : @route   POST /auth/google
+// @desc    Connexion via Google (Firebase Auth) — LOGIN ONLY, jamais de création
+// @route   POST /auth/google
 exports.googleLogin = async (req, res) => {
   try {
     const { idToken } = req.body;
-        console.log('Type idToken:', typeof idToken);
-    console.log('Longueur idToken:', idToken?.length);
-    console.log('Début idToken:', idToken?.substring(0, 50));
-
 
     if (!idToken) {
       return res.status(400).json({ success: false, message: "Token Google manquant." });
     }
 
     const decodedToken = await adminAuth.verifyIdToken(idToken);
-    const { email, given_name, family_name, name, uid } = decodedToken;
+    const { email, email_verified, uid } = decodedToken;
 
     if (!email) {
       return res.status(400).json({ success: false, message: "Aucun email associé à ce compte Google." });
     }
 
-    let user = await User.findOne({ email });
+    // Google/Firebase garantit déjà la vérification, mais on double-check par sécurité
+    if (email_verified === false) {
+      return res.status(403).json({ success: false, message: "Email Google non vérifié." });
+    }
 
+    if (!isDomainAllowed(email)) {
+      return res.status(403).json({ success: false, message: "Domaine email non autorisé pour cet espace." });
+    }
+
+    const user = await User.findOne({ email });
+
+    // ⚠️ Plus de création automatique : le compte doit avoir été créé par un admin au préalable
     if (!user) {
-      user = await User.create({
-        firstName: given_name || name || "Utilisateur",
-        lastName: family_name || "Google",
-        email,
-        authProvider: "google",
-        googleId: uid,
-        role: "EMPLOYEE"
+      return res.status(403).json({
+        success: false,
+        message: "Aucun compte associé à cet email. Contactez un administrateur pour obtenir un accès."
       });
-    } else if (user.authProvider !== "google") {
-      user.googleId = uid;
-      await user.save({ validateBeforeSave: false });
     }
 
     if (user.status === "INACTIVE") {
       return res.status(403).json({ success: false, message: "Ce compte a été désactivé. Contactez un administrateur." });
+    }
+
+    // Lie le compte Google si ce n'était pas déjà fait (ex: compte créé par admin avec juste un mdp temporaire)
+    if (!user.googleId) {
+      user.googleId = uid;
+      if (user.authProvider === "local" && !user.password) {
+        user.authProvider = "google";
+      }
+      await user.save({ validateBeforeSave: false });
     }
 
     const token = generateToken(user._id);
