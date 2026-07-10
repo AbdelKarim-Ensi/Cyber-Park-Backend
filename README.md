@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 ```
 backend
@@ -49,3 +50,6 @@ backend
    └─ mailer.js
 
 ```
+=======
+first branch
+>>>>>>> 0c7a5b09caa20feb28a0c8365fd8b208d478c5ef
