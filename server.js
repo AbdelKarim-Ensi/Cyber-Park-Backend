@@ -89,6 +89,8 @@ app.use('/profil', require('./routes/profile.routes'));
 //chatbot
 const chatbotRoutes = require("./routes/chatbot.routes");
 app.use("/chatbot", chatbotRoutes);
+const subscriberRoutes = require("./routes/subscriber.routes");
+app.use("/subscribers", subscriberRoutes);
 
 app.get("/test-chatbot-alive", (req, res) => {
   res.json({ ok: true });

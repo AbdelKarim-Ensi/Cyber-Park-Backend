@@ -1,4 +1,46 @@
 const Announcement = require("../models/announcement.model");
+// AJOUT : import du modèle Subscriber pour la diffusion PUBLIC
+const Subscriber = require("../models/subscriber.model");
+// AJOUT : utilitaire d'envoi d'email existant du projet (adapter le chemin/nom si différent)
+const  sendEmail  = require("../utils/mailer");
+
+// AJOUT : fonction de diffusion aux abonnés actifs quand une annonce est PUBLIC
+// Fire-and-forget : on ne bloque jamais la réponse HTTP sur l'envoi des emails
+async function notifySubscribers(announcement) {
+  try {
+    const activeSubscribers = await Subscriber.find({ status: "ACTIVE" });
+
+    if (!activeSubscribers.length) return;
+
+    const emailPromises = activeSubscribers.map((sub) =>
+      sendEmail({
+        to: sub.email,
+        subject: `Cyber Park HR — ${announcement.title}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+            <h2>${announcement.title}</h2>
+            <p>${announcement.content}</p>
+            ${announcement.image ? `<img src="${announcement.image}" style="max-width:100%; margin-top:10px;" />` : ""}
+            <hr />
+            <p style="font-size:12px; color:#888;">
+              Vous recevez cet email car vous êtes abonné aux actualités Cyber Park.
+              <a href="${process.env.FRONTEND_URL || "http://localhost:4200"}/unsubscribe/${sub._id}">Se désabonner</a>
+
+            </p>
+          </div>
+        `,
+      }).catch((err) => {
+        // AJOUT : on log l'échec individuel sans casser la boucle Promise.all
+        console.error(`Échec envoi email à ${sub.email} :`, err.message);
+      })
+    );
+
+    // Fire-and-forget global : on ne attend pas le résultat dans createAnnouncement
+    await Promise.allSettled(emailPromises);
+  } catch (error) {
+    console.error("Erreur notifySubscribers :", error.message);
+  }
+}
 
 // 1. [ADMIN] Créer une annonce
 // 1. Remplacer la méthode createAnnouncement par ce bloc de validation :
@@ -29,6 +71,13 @@ exports.createAnnouncement = async (req, res) => {
     });
     
     await announcement.save();
+
+    // AJOUT : si l'annonce est PUBLIC, on diffuse aux abonnés du site vitrine
+    // Fire-and-forget : ne bloque pas la réponse HTTP, pas de "await" ici
+    if (announcement.target === "PUBLIC") {
+      notifySubscribers(announcement);
+    }
+
     return res.status(201).json({ success: true, message: "Annonce publiée !", data: announcement });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
