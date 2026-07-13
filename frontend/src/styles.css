@@ -1,0 +1,174 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+/* ==========================================================================
+   SweetAlert2 — Thème adaptatif Pur CSS (Cyber Park)
+   ========================================================================== */
+
+/* ── Popup principale (Mode Clair par défaut) ────────────────────────────── */
+.swal-popup {
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  font-family: inherit !important;
+  padding: 2rem !important;
+}
+
+/* ── Titre ───────────────────────────────────────────────────────────────── */
+.swal-title {
+  color: #1f2937 !important;
+  font-size: 1.375rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* ── Corps du message ────────────────────────────────────────────────────── */
+.swal-text {
+  color: #1f2937 !important;
+  opacity: 0.85 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.6 !important;
+}
+
+/* ── Icônes SweetAlert2 Générique ────────────────────────────────────────── */
+.swal2-icon {
+  border-color: #e5e7eb !important;
+}
+
+/* ── Icône succès ── */
+.swal2-icon.swal2-success {
+  border-color: #22c55e !important;
+  color: #22c55e !important;
+}
+.swal2-icon.swal2-success [class^='swal2-success-line'] {
+  background-color: #22c55e !important;
+}
+.swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+/* ── Icône erreur ── */
+.swal2-icon.swal2-error {
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+}
+.swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+  background-color: #ef4444 !important;
+}
+
+/* ── Icône avertissement ── */
+.swal2-icon.swal2-warning {
+  border-color: #f59e0b !important;
+  color: #f59e0b !important;
+}
+
+/* ── Icône question ── */
+.swal2-icon.swal2-question {
+  border-color: #2563eb !important;
+  color: #2563eb !important;
+}
+
+/* ── Boutons ─────────────────────────────────────────────────────────────── */
+.swal-confirm-btn,
+.swal-cancel-btn {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  padding: 0.6rem 1.4rem !important;
+  letter-spacing: 0.01em !important;
+  transition: opacity 0.15s ease, transform 0.1s ease !important;
+}
+
+.swal-confirm-btn:hover,
+.swal-cancel-btn:hover {
+  opacity: 0.88 !important;
+  transform: translateY(-1px) !important;
+}
+
+.swal-confirm-btn:active,
+.swal-cancel-btn:active {
+  transform: translateY(0) !important;
+}
+
+.swal-confirm-btn:focus,
+.swal-cancel-btn:focus {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3) !important;
+}
+
+/* ── Barre de progression (timer) ────────────────────────────────────────── */
+.swal2-timer-progress-bar {
+  background: #2563eb !important;
+  opacity: 0.7 !important;
+}
+
+/* ── Backdrop (fond derrière la popup) ───────────────────────────────────── */
+.swal2-backdrop-show {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ── Toast (position top-end) ────────────────────────────────────────────── */
+.swal-toast {
+  border-radius: 8px !important;
+  padding: 0.75rem 1.25rem !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+
+/* ==========================================================================
+   OVERRIDES SPÉCIFIQUES AU MODE SOMBRE (Détection automatique Tailwind)
+   ========================================================================== */
+.dark .swal-popup,
+html.dark .swal-popup,
+body.dark .swal-popup {
+  background: #0f172a !important; /* Ton fond bleu nuit Cyber Park */
+  color: #f8fafc !important;      /* Texte blanc/clair */
+  border-color: #1e293b !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+
+.dark .swal-title,
+html.dark .swal-title,
+body.dark .swal-title {
+  color: #ffffff !important;
+}
+
+.dark .swal-text,
+html.dark .swal-text,
+body.dark .swal-text {
+  color: #f1f5f9 !important;
+}
+
+/* Backdrop assombri pour le mode dark */
+.dark .swal2-backdrop-show,
+html.dark .swal2-backdrop-show {
+  background: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Formulaires de saisie dans l'alerte en Mode Sombre */
+.dark .swal2-input,
+.dark .swal2-textarea,
+.dark .swal2-select {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+.dark .swal2-input:focus,
+.dark .swal2-textarea:focus,
+.dark .swal2-select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+}

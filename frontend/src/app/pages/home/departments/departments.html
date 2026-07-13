@@ -1,0 +1,48 @@
+<div class="dept-container">
+  <header class="page-header">
+    <div class="title-section">
+      <h2>Structure de l'entreprise</h2>
+      <p>Gérez les départements et leurs responsables.</p>
+    </div>
+    <button *ngIf="isAdmin()" class="btn-primary" routerLink="/home/departments/ajout">
+  + Ajouter un département
+</button>
+
+
+  </header>
+
+  <div class="grid-cards">
+    @for (dept of departments; track dept._id) {
+      <div class="card">
+        
+        <div class="card-header">
+          <h3>{{ dept.name }}</h3>
+          <div class="actions">
+            <button *ngIf="isAdmin()" class="btn-icon btn-edit" (click)="editDept(dept._id)">✎</button>
+            <button *ngIf="isAdmin()" class="btn-icon btn-delete" (click)="deleteDept(dept._id)">🗑</button>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <span class="label">Responsable</span>
+          <div class="user-cell">
+            <div class="avatar-sm">{{ getInitials(dept.managerId) }}</div>
+            <span class="user-name">
+              {{ dept.managerId ? (dept.managerId.firstName + ' ' + dept.managerId.lastName) : 'Aucun responsable assigné' }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <span class="label">Description</span>
+          <span class="badge badge-info" [title]="dept.description">{{ dept.description || 'Aucune' }}</span>
+        </div>
+        
+      </div>
+    } @empty {
+      <div style="text-align: center; color: var(--text-muted); grid-column: 1 / -1; padding: 2rem;">
+        <p>Aucun département trouvé.</p>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,80 @@
+<div class="module-container">
+  
+  <div class="page-header">
+    <div class="page-title-section">
+      <h2>Gestion des projets</h2>
+      <p class="page-subtitle">{{ filteredProjects.length }} projets actifs au sein de l'organisation</p>
+    </div>
+    <button *ngIf="isAdmin()" class="btn-primary" routerLink="/home/projects/ajout">+ Nouveau Projet</button>
+  </div>
+
+ @if (isAdmin()) {
+   <div class="filters-container">
+    <div class="search-box">
+      <input type="text" placeholder="🔍 Rechercher un projet..." class="filter-input" [(ngModel)]="searchQuery" (input)="applyFilters()" />
+    </div>
+    <select class="filter-select" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+      <option value="">Tous les statuts</option>
+      <option *ngFor="let stat of statusList" [value]="stat">
+        {{ statusConfig[stat] }}
+      </option>
+    </select>
+  </div>
+ }
+
+  <div class="grid-cards">
+    <ng-container *ngIf="filteredProjects.length; else emptyState">
+      <div class="card" *ngFor="let project of filteredProjects">
+        
+        <div class="card-header">
+          <span class="badge" [ngClass]="'badge-' + (project.status?.toLowerCase() || 'pending')">
+            {{ statusConfig[project.status] || project.status }}
+          </span>
+          
+          @if(isAdmin()){
+            <div class="actions">
+            <button  class="btn-icon btn-edit" [routerLink]="['/home/projects/update', project.id]">✎</button>
+            <button class="btn-icon btn-delete" (click)="deleteProject(project.id)">🗑</button>
+          </div>
+          }
+        </div>
+
+        <div class="card-body-project">
+          <h3 class="project-title">{{ project.name }}</h3>
+          <p class="project-desc">{{ project.description }}</p>
+        </div>
+
+        <div class="card-footer-project">
+          <div class="project-dates">
+            <svg class="icon-calendar-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Du {{ project.startDate | date:'dd/MM/yyyy' }} au {{ project.endDate ? (project.endDate | date:'dd/MM/yyyy') : 'Non défini' }}</span>
+          </div>
+          
+          <div class="project-team">
+            <div class="avatar-stack">
+              <div class="avatar" *ngFor="let emp of (project.assignedEmployees || []) | slice:0:4">
+                {{ getInitials(emp) }}
+              </div>
+              <div class="avatar more" *ngIf="(project.assignedEmployees || []).length > 4">
+                +{{ (project.assignedEmployees || []).length - 4 }}
+              </div>
+            </div>
+            <span class="team-count">{{ (project.assignedEmployees || []).length }} membres</span>
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>Aucun projet trouvé pour cette recherche.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

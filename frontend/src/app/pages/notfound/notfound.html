@@ -1,0 +1,113 @@
+<div class="ems-error-container">
+  <div class="bg-glow top-glow" aria-hidden="true"></div>
+  <div class="bg-glow bottom-glow" aria-hidden="true"></div>
+
+  <div class="error-wrapper">
+    
+    <div class="error-header">
+      <div class="icon-glow-wrapper">
+        <div class="icon-blur-bg"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="alert-icon">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      
+      <h1 class="error-code">404</h1>
+      <h2 class="error-title">Page introuvable</h2>
+      <p class="error-description">
+        La ressource que vous recherchez n'existe pas, a été déplacée, ou vous ne disposez pas des droits d'accès nécessaires sur cet espace EMS.
+      </p>
+    </div>
+
+    <div class="search-box-section">
+      <form (ngSubmit)="onSearch()" class="search-form">
+        <div class="input-container">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            name="searchQuery"
+            placeholder="Rechercher une section ou un outil..." 
+            class="search-input"
+          />
+          <button type="submit" class="btn-search-submit" aria-label="Lancer la recherche">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="quick-links-grid">
+      
+      <div class="link-card" (click)="goToRoute('')">
+        <div class="link-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div class="link-text">
+          <h3>Accueil</h3>
+          <p>Retourner à l'accueil principal</p>
+        </div>
+      </div>
+
+      <div class="link-card" (click)="goToRoute('/login')">
+        <div class="link-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="link-text">
+          <h3>Login</h3>
+          <p>Se connecter à votre compte</p>
+        </div>
+      </div>
+
+      <div class="link-card" (click)="reportIssue()">
+        <div class="link-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div class="link-text">
+          <h3>Support Technique</h3>
+          <p>Ouvrir un ticket d'incident</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="infrastructure-section">
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <span class="metric-value">200ms</span>
+          <span class="metric-label">Temps de réponse</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value text-success">99.99%</span>
+          <span class="metric-label">Disponibilité système</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">24/7</span>
+          <span class="metric-label">Support actif</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-reference-box">
+      <span class="ref-label">Code d'erreur système :</span>
+      <code class="ref-code">EMS_404_NOT_FOUND</code>
+    </div>
+
+  </div>
+</div>

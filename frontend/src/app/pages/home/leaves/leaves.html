@@ -1,0 +1,104 @@
+<div class="module-container">
+  
+  <div class="page-header">
+    <div class="page-title-section">
+      <h2>Gestion des Congés</h2>
+    </div>
+    <button *ngIf="!isAdmin()"class="btn-primary" routerLink="/home/leaves/ajout">+ Demande Congé</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-info">
+        <h3>En attente</h3>
+        <p class="number warning">{{ stats.pending }}</p>
+      </div>
+      <div class="stat-icon">⏳</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-info">
+        <h3>Approuvés</h3>
+        <p class="number success">{{ stats.approved }}</p>
+      </div>
+      <div class="stat-icon">✅</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-info">
+        <h3>Refusés</h3>
+        <p class="number danger">{{ stats.rejected }}</p>
+      </div>
+      <div class="stat-icon">❌</div>
+    </div>
+  </div>
+
+  <div class="grid-cards">
+    
+    <div *ngIf="!leaveRequests || leaveRequests.length === 0" class="no-data-message" style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
+      <p>Aucune demande de congé n'a été trouvée dans la base de données.</p>
+    </div>
+
+    <div class="card" *ngFor="let leave of leaveRequests" >
+      
+      <div class="card-header" *ngIf="isAdmin()">
+        <div class="user-cell">
+          <div class="avatar-sm">
+            {{ leave.employeeId?.firstName ? (leave.employeeId.firstName[0] + leave.employeeId.lastName[0]) : 'U' }}
+          </div>
+          <div class="user-info-text">
+            <span class="user-name">{{ leave.employeeId?.firstName || 'Utilisateur' }} {{ leave.employeeId?.lastName || '' }}</span>
+            <span class="user-meta">{{ leave.employeeId?.email || 'Pas d\'email disponible' }}</span>
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span class="badge badge-info">{{ getLeaveTypeLabel(leave.type) }}</span>
+          
+          <button *ngIf="isAdmin()"
+            (click)="deleteLeave(leave._id)" 
+            style="background: transparent; border: none; cursor: pointer; font-size: 1.1rem; color: #ef4444;" 
+            title="Supprimer la demande">
+            🗑️
+          </button>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <div class="info-row">
+          <span class="label">Dates</span>
+          <span class="value-text">{{ leave.startDate | date:'dd LLL yyyy' }} - {{ leave.endDate | date:'dd LLL yyyy' }}</span>
+        </div>
+        <div class="info-row">
+  <span class="label">Durée</span>
+  <span class="value-text fw-bold">
+    {{ calculateDuration(leave.startDate, leave.endDate) }} {{ calculateDuration(leave.startDate, leave.endDate) > 1 ? 'jours' : 'jour' }}
+  </span>
+</div>
+        
+        <div class="justification-block">
+          <span class="label">Justification :</span>
+          <p class="justification-text">{{ leave.reason || 'Aucun motif fourni.' }}</p>
+        </div>
+
+        <div class="status-indicator-row" *ngIf="leave.status !== 'PENDING' || !isAdmin()" style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <span class="label">Statut :</span>
+            <span class="status-badge"
+                  [ngClass]="{
+                    'status-badge-pending': leave.status === 'PENDING',
+                    'status-badge-approved': leave.status === 'APPROVED',
+                    'status-badge-rejected': leave.status === 'REJECTED'
+                  }">
+              {{ leave.status === 'APPROVED' ? 'Approuvée' : (leave.status === 'REJECTED' ? 'Refusée' : 'En attente') }}
+            </span>
+        </div>
+      </div>
+      <div class="card-footer-actions" *ngIf="leave.status === 'PENDING' && isAdmin()">
+        <button *ngIf="isAdmin()" class="btn-action btn-reject" (click)="reject(leave._id)">Refuser ❌</button>
+        <button *ngIf="isAdmin()" class="btn-action btn-approve" (click)="approve(leave._id)">Approuver ✅</button>
+      </div>
+      
+    </div>
+
+  </div>
+</div>

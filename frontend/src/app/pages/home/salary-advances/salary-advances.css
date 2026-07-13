@@ -1,0 +1,366 @@
+/* ===================================================
+   1. CONTENEUR GLOBAL
+   =================================================== */
+:host {
+  display: block;
+  width: 100%;
+}
+
+.module-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===================================================
+   2. HEADER DE LA PAGE
+   =================================================== */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.page-title-section h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0 0 0.5rem 0;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.625rem;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* ===================================================
+   3. FORMULAIRE D'AJOUT (Caché/Affiché)
+   =================================================== */
+.form-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.form-title { margin: 0 0 1.5rem 0; color: var(--text-main); }
+.custom-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-label { font-size: 0.875rem; color: var(--text-main); font-weight: 500; }
+.required { color: #ef4444; }
+
+.form-input {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  outline: none;
+  font-family: inherit;
+}
+.form-input:focus { border-color: var(--primary); }
+
+.form-actions-form { display: flex; justify-content: flex-end; }
+.btn-submit {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ===================================================
+   4. GRILLE RESPONSIVE DES CARTES
+   =================================================== */
+.grid-cards {
+  display: grid;
+  /* 🎯 Crée des colonnes automatiques de 340px minimum */
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+/* ===================================================
+   5. HEADER DE LA CARTE (Alignement au millimètre)
+   =================================================== */
+.card-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between; /* Sépare bien la gauche et la droite */
+  align-items: stretch; /* Permet à la gauche et la droite d'avoir la même hauteur */
+  border-bottom: 1px solid var(--border);
+}
+
+/* --- PARTIE GAUCHE (Avatar + Textes) --- */
+.user-info { 
+  display: flex; 
+  align-items: center; 
+  gap: 1rem; 
+}
+
+.avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.user-details { 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; /* Pousse le nom en haut, la date en bas */
+  gap: 0.35rem; /* Espace propre entre le nom et la date */
+}
+
+.user-name { 
+  font-weight: 600; 
+  color: var(--text-main); 
+  font-size: 1rem; 
+  line-height: 1;
+}
+
+.date-request { 
+  font-size: 0.75rem; 
+  color: var(--text-muted); 
+  line-height: 1;
+}
+
+/* --- PARTIE DROITE (Statut + Corbeille) --- */
+.header-right-actions {
+  display: flex;
+  flex-direction: column; /* Organise les éléments de haut en bas */
+  align-items: flex-end; /* Aligne tout complètement à droite */
+  justify-content: space-between; /* Pousse le statut en haut, la corbeille en bas */
+  gap: 0.5rem;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Espacement propre entre le mot "Statut :" et le badge */
+}
+
+.status-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Bloc Corbeille aligné à droite */
+.delete-action {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.btn-delete-small {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem 0.4rem; /* Un peu moins de padding pour être bien aligné */
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete-small:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+/* ===================================================
+   6. BADGES DE STATUT
+   =================================================== */
+.badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-warning { background-color: rgba(245, 158, 11, 0.15); color: #d97706; }
+.badge-success { background-color: rgba(16, 185, 129, 0.15); color: #059669; }
+.badge-danger { background-color: rgba(239, 68, 68, 0.15); color: #dc2626; }
+.badge-info { background-color: rgba(59, 130, 246, 0.15); color: #2563eb; }
+
+/* Mode sombre pour les badges (optionnel si tu gères en global) */
+:host-context(.dark) .badge-warning { color: #fde047; }
+:host-context(.dark) .badge-success { color: #86efac; }
+:host-context(.dark) .badge-danger { color: #fca5a5; }
+:host-context(.dark) .badge-info { color: #93c5fd; }
+
+/* Petite Corbeille */
+.btn-delete-small {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-delete-small:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* ===================================================
+   7. CORPS DE LA CARTE (Informations)
+   =================================================== */
+.card-body { padding: 1.5rem; flex-grow: 1; }
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+.info-row:first-child { padding-top: 0; }
+.label { color: var(--text-muted); font-size: 0.875rem; }
+.value-text { color: var(--text-main); font-size: 0.875rem; }
+.fw-bold { font-weight: 600; }
+.amount-highlight { color: #10b981; font-size: 1rem; }
+
+.justification-block {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.justification-text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-main);
+  background-color: var(--bg-page);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  line-height: 1.5;
+}
+
+/* ===================================================
+   8. FOOTER : BOUTONS 50/50 OU STATUT
+   =================================================== */
+.card-footer-actions {
+  display: flex;
+  gap: 1rem; /* 🎯 Espace entre Approuver et Refuser */
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+  background-color: rgba(156, 163, 175, 0.03);
+}
+
+.btn-action {
+  flex: 1; /* 🎯 C'EST ICI L'ÉQUIPARTITION ! (Chaque bouton prend 50%) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-action:active {
+  transform: scale(0.97);
+}
+
+/* Bouton Approuver */
+.btn-approve {
+  background-color: #10b981;
+  color: #ffffff;
+}
+.btn-approve:hover { background-color: #059669; }
+
+/* Bouton Refuser */
+.btn-reject {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.btn-reject:hover { background-color: #ef4444; color: #ffffff; }
+
+/* Indicateur de statut (quand la demande n'est plus PENDING) */
+.status-indicator-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.5rem 0;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ===================================================
+   9. UTILITAIRES & ANIMATIONS
+   =================================================== */
+.empty-state { 
+  text-align: center; 
+  color: var(--text-muted); 
+  padding: 3rem; 
+  grid-column: 1 / -1; 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.4s ease-out; }
+
+/* ===================================================
+   10. RESPONSIVE STRICT (MOBILE)
+   =================================================== */
+@media (max-width: 768px) {
+  .page-header { 
+    flex-direction: column; 
+    align-items: stretch; 
+    gap: 1rem; 
+  }
+  .btn-primary { width: 100%; }
+  .form-row { grid-template-columns: 1fr; }
+  
+  .grid-cards {
+    grid-template-columns: 1fr; /* 1 seule carte par ligne sur téléphone */
+  }
+}

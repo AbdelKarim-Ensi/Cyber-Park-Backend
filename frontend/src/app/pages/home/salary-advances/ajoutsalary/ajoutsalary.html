@@ -1,0 +1,50 @@
+<div class="module-container">
+  
+  <div class="page-header">
+    <div class="page-title-section">
+      <h2>Nouvelle demande d'avance</h2>
+      <p class="page-subtitle">Remplissez le formulaire ci-dessous pour soumettre votre demande.</p>
+    </div>
+    
+  </div>
+
+  <div class="form-card fade-in">
+    <h3 class="form-title">Détails de la demande</h3>
+    
+    <form [formGroup]="advanceForm" (ngSubmit)="onSubmit()" class="custom-form">
+      
+      <div class="form-row">
+        <div class="form-group">
+            <label class="form-label">Montant souhaité (€) <span class="required">*</span></label>
+            <input type="number" formControlName="amount" class="form-input" placeholder="Ex: 1500"
+                  (blur)="onAmountBlur()">
+            <!-- AJOUT: message d'erreur rouge affiché au blur si montant > salaire -->
+            <small class="error-text" *ngIf="showAmountError && amountExceedsSalary">
+              Le montant dépasse votre salaire ({{ employeeSalary }} €).
+            </small>
+          </div>
+        
+        <div class="form-group">
+  <label class="form-label">Mois de remboursement <span class="required">*</span></label>
+  <input type="month" formControlName="repaymentMonth" class="form-input">
+</div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Motif de l'avance <span class="required">*</span></label>
+        <textarea formControlName="reason" class="form-input" rows="5" placeholder="Expliquez brièvement le motif de votre demande..."></textarea>
+      </div>
+
+      <div class="form-actions-form">
+        <button type="button" class="btn-cancel" routerLink="/home/salaryAdvances">
+          Annuler
+        </button>
+        <button type="submit" [disabled]="advanceForm.invalid" class="btn-submit">
+          Soumettre la demande
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>

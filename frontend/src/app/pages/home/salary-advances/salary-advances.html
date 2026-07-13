@@ -1,0 +1,106 @@
+<div class="module-container">
+  
+  <div class="page-header">
+    <div class="page-title-section">
+      <h2>Avances sur salaire</h2>
+      <p class="page-subtitle">Gérez les demandes financières de vos collaborateurs.</p>
+    </div>
+    
+    <button *ngIf="!isAdmin()" class="btn-primary" routerLink="/home/salaryAdvances/ajout">
+      + Nouvelle demande
+    </button>
+  </div>
+
+  <div class="form-card" *ngIf="isFormOpen">
+    <h3 class="form-title">Nouvelle demande d'avance</h3>
+    <form [formGroup]="advanceForm" (ngSubmit)="onSubmit()" class="custom-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Montant souhaité (€) <span class="required">*</span></label>
+          <input type="number" formControlName="amount" class="form-input" placeholder="Ex: 1500">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mois de remboursement <span class="required">*</span></label>
+          <input type="month" formControlName="repaymentMonth" class="form-input">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Motif de l'avance <span class="required">*</span></label>
+        <textarea formControlName="reason" class="form-input" rows="3" placeholder="Expliquez brièvement le motif..."></textarea>
+      </div>
+      <div class="form-actions-form">
+        <button type="submit" class="btn-submit" [disabled]="advanceForm.invalid">Soumettre</button>
+      </div>
+    </form>
+  </div>
+
+  <ng-container *ngIf="advanceRequests.length > 0; else emptyState">
+  <div class="grid-cards">
+    <div class="card fade-in" *ngFor="let req of advanceRequests">
+      
+      <div class="card-header">
+  
+  <div class="user-info">
+    <div class="avatar">{{ getInitials(req.employeeId) }}</div>
+    <div class="user-details">
+      <span class="user-name">{{ $any(req).employeeId?.firstName }} {{ $any(req).employeeId?.lastName }}</span>
+      <span class="date-request">Demande du {{ req.createdAt | date:'dd/MM/yyyy' }}</span>
+    </div>
+  </div>
+  
+  <div class="header-right-actions">
+      <div class="status-row" >
+        <br>
+      <span class="badge badge-warning" *ngIf="req.status === 'PENDING'">En attente</span>
+      <span class="badge badge-success" *ngIf="req.status === 'APPROVED'">Approuvée</span>
+      <span class="badge badge-danger" *ngIf="req.status === 'REJECTED'">Refusée</span>
+      <span class="badge badge-info" *ngIf="req.status === 'PAID'">Payée</span>
+    </div>
+
+
+    <div class="delete-action" *ngIf="isAdmin()">
+      <button class="btn-delete-small" (click)="deleteAdvance(req._id || req.id)" title="Supprimer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+      <div class="card-body">
+        <div class="info-row">
+          <span class="label">Montant demandé</span>
+          <span class="value-text fw-bold amount-highlight">{{ req.amount }} €</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Mois de remboursement</span>
+          <span class="value-text">{{ req.repaymentMonth }}</span>
+        </div>
+        
+        <div class="justification-block">
+          <span class="label">Motif :</span>
+          <p class="justification-text">{{ req.reason || 'Aucun motif fourni.' }}</p>
+        </div>
+      </div>
+
+      <div class="card-footer-actions" *ngIf="req.status === 'PENDING' && isAdmin()" >
+        <button  class="btn-action btn-approve" (click)="updateStatus(req._id || req.id, 'APPROVED')">
+          Approuver
+        </button>
+        <button  class="btn-action btn-reject" (click)="updateStatus(req._id || req.id, 'REJECTED')">
+          Refuser
+        </button>
+      </div>
+
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #emptyState>
+  <div class="empty-state">
+    <p>Aucune demande d'avance sur salaire trouvée.</p>
+  </div>
+</ng-template>
+</div>

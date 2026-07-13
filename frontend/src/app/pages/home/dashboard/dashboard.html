@@ -1,0 +1,214 @@
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <header class="dashboard-header">
+      <button class="mobile-sidebar-toggle" (click)="toggleSidebar()" aria-label="Ouvrir le menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <h1 class="dashboard-title">Tableau de Bord</h1>
+      <p class="dashboard-subtitle">Bienvenue ! Voici le résumé de votre journée.</p>
+    </header>
+
+    <div class="dashboard-grid">
+
+      <div class="dashboard-col-main">
+
+        <article class="employee-card card-padding">
+          <div class="card-header">
+            <h2>Session de Travail</h2>
+            <p>Suivez la durée de votre session active</p>
+          </div>
+
+          <div class="chrono-container">
+            <div class="timer-display" [ngClass]="{'timer-running': timer.timerStatus() === 'running', 'timer-paused': timer.timerStatus() === 'paused'}">
+              {{ timer.formattedTime() }}
+            </div>
+
+            <div class="chrono-actions">
+              <button class="btn-chrono btn-start" (click)="onCheckIn()" *ngIf="!todayDoc" [disabled]="checkInLoading">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>{{ checkInLoading ? 'Enregistrement...' : 'Pointer mon arrivée' }}</span>
+              </button>
+
+              <button class="btn-chrono btn-pause" (click)="onTogglePause()" *ngIf="todayDoc && !todayDoc.checkOut">
+                <svg *ngIf="!isOnBreak" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <rect x="6" y="4" width="4" height="16"></rect>
+                  <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                <svg *ngIf="isOnBreak" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>{{ isOnBreak ? 'Reprendre' : 'Pause' }}</span>
+              </button>
+
+              <button class="btn-chrono btn-stop" (click)="onCheckOut()" *ngIf="todayDoc && !todayDoc.checkOut" [disabled]="checkOutLoading">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                </svg>
+                <span>{{ checkOutLoading ? 'Déconnexion...' : 'Pointer mon départ' }}</span>
+              </button>
+              <div *ngIf="todayDoc && todayDoc.checkOut" class="col-date" style="width: 100%; text-align: center;">
+                Journée terminée pour aujourd'hui ✅
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="employee-card card-padding" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2>Mes Pointages d'Aujourd'hui</h2>
+            <p>Historique des actions de la journée</p>
+          </div>
+
+          <div class="table-responsive" *ngIf="allAttendanceRows.length > 0">
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th>Type d'action</th>
+                  <th>Heure</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of allAttendanceRows">
+                  <td>
+                    <span class="badge-custom" [ngClass]="getTypeBadgeClass(row.type)">{{ row.type }}</span>
+                  </td>
+                  <td class="col-time">{{ row.time }}</td>
+                  <td>
+                    <span class="badge-custom" [ngClass]="row.status === 'En retard' ? 'badge-yellow' : (row.status === 'Absent' ? 'badge-danger' : 'badge-green')">{{ row.status }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="allAttendanceRows.length === 0" class="col-date" style="padding: 1rem; text-align: center;">
+            Aucun pointage enregistré pour aujourd'hui.
+          </div>
+        </article>
+
+        <article class="employee-card card-padding" style="margin-top: 1.5rem;" *ngIf="isAdmin">
+          <div class="card-header">
+            <h2>Suivi Global des Collaborateurs</h2>
+            <p>Pointages en direct de l'équipe (Actualisé automatiquement)</p>
+          </div>
+
+          <div class="table-responsive">
+            <table class="dashboard-table" *ngIf="!loadingAdminCards && allEmployeeCards.length > 0">
+              <thead>
+                <tr>
+                  <th>Collaborateur</th>
+                  <th>Date du Pointage</th>
+                  <th>Arrivée (Check-In)</th>
+                  <th>Départ (Check-Out)</th>
+                  <th>Statut global</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let card of allEmployeeCards">
+                  <td style="font-weight: 600; color: #60a5fa;">
+                    {{ card.employeeId?.firstName }} {{ card.employeeId?.lastName }}
+                  </td>
+                  <td class="col-date">{{ card.date | date:'dd/MM/yyyy' }}</td>
+                  <td class="col-time" style="color: #4ade80;">{{ card.checkIn ? (card.checkIn | date:'HH:mm') : '--:--' }}</td>
+                  <td class="col-time" style="color: #f87171;">{{ card.checkOut ? (card.checkOut | date:'HH:mm') : 'En cours ⏳' }}</td>
+                  <td>
+                    <span class="badge-custom" [ngClass]="card.status === 'PRESENT' ? 'badge-green' : 'badge-yellow'">
+                      {{ card.status }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div *ngIf="!loadingAdminCards && allEmployeeCards.length === 0" class="col-date" style="padding: 1rem; text-align: center;">
+              Aucun pointage d'équipe aujourd'hui.
+            </div>
+            <div *ngIf="loadingAdminCards" class="col-date" style="padding: 1rem; text-align: center;">
+              Chargement des données de l'équipe...
+            </div>
+          </div>
+        </article>
+
+      </div> <div class="dashboard-col-side">
+
+        <article class="employee-card card-padding">
+          <div class="card-header">
+            <h2>📢Dernières Annonces</h2>
+            <p>Restez informé des nouveautés</p>
+          </div>
+
+          <div class="announcement-list" *ngIf="!loadingAnnouncements && announcements.length > 0">
+            <div class="announcement-item" *ngFor="let announcement of announcements">
+              <h3>{{ announcement.title }}</h3>
+              <span class="announcement-date">{{ announcement.date }}</span>
+              <p>{{ announcement.excerpt }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="!loadingAnnouncements && announcements.length === 0" class="col-date" style="padding: 0.5rem 0; text-align: center;">
+            Aucune annonce récente à afficher.
+          </div>
+          <div *ngIf="loadingAnnouncements" class="col-date" style="padding: 0.5rem 0; text-align: center;">
+            Chargement des annonces...
+          </div>
+        </article>
+
+        <article class="employee-card card-padding" style="margin-top: 1.5rem;">
+  
+  <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <div>
+      <h2>✅Ma To-Do du Jour</h2>
+      <p>Organisez vos tâches quotidiennes</p>
+    </div>
+    <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: 6px; background-color: #2563eb; color: white; border: none; cursor: pointer;" (click)="addTask()">
+      + Ajouter
+    </button>
+  </div>
+
+  <div class="todo-list" *ngIf="todos.length > 0" style="margin-top: 1rem;">
+    
+    <div class="todo-item" *ngFor="let todo of todos" 
+     [class.is-done]="todo.completed"
+     (click)="toggleTodo(todo.id)"> <input type="checkbox" class="todo-checkbox" 
+         [checked]="todo.completed" 
+         style="pointer-events: none;">
+  
+  <span class="todo-text">
+    {{ todo.title }}
+  </span>
+
+  <button class="todo-delete-btn" (click)="deleteTodo(todo.id, $event)" title="Supprimer">✖</button>
+
+</div>
+  </div>
+
+  <div *ngIf="todos.length === 0" class="col-date" style="text-align: center; padding: 1.5rem 0; font-size: 0.875rem;">
+    Aucune tâche pour aujourd'hui. Cliquez sur "Ajouter" pour commencer !
+  </div>
+  
+</article>
+    <article class="employee-card card-padding" style="margin-top: 1.5rem;" *ngIf="isAdmin">
+          <div class="card-header">
+            <h2>📣 Diffusion aux Abonnés</h2>
+            <p>Envoyez un événement ou une actualité à tous les abonnés du site vitrine</p>
+          </div>
+          <button
+            class="btn-primary"
+            style="margin-top: 1rem; width: 100%; padding: 0.6rem; font-size: 0.9rem; border-radius: 6px; background-color: #2563eb; color: white; border: none; cursor: pointer;"
+            (click)="openBroadcastModal()"
+            [disabled]="broadcastLoading"
+          >
+            {{ broadcastLoading ? 'Envoi...' : '+ Nouveau Broadcast' }}
+          </button>
+        </article>
+
+      </div> </div> </div>
+</div>

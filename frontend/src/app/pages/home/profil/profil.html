@@ -1,0 +1,226 @@
+<div class="background-gradient">
+  <div style="max-width: 850px; margin: 0 auto;">
+    
+    <div style="margin-bottom: 2rem;">
+      <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-2">Mon Profil</h1>
+      <p class="text-slate-600 dark:text-slate-400">Gérez vos informations personnelles et configurez la sécurité de votre compte.</p>
+    </div>
+
+    <article class="employee-card profile-header-card">
+      <div class="profile-header-row">
+
+        <div class="avatar-container">
+          <img [src]="avatarPreview" alt="Avatar Utilisateur" class="avatar-image">
+          
+          <label for="avatar-input" class="avatar-upload-btn" title="Changer de photo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+              <circle cx="12" cy="13" r="3"/>
+            </svg>
+          </label>
+          <input id="avatar-input" type="file" accept="image/*" (change)="onAvatarChange($event)" class="avatar-input-hidden">
+        </div>
+
+        <div class="profile-identity">
+          <h2 class="profile-name">
+            {{ profileForm.get('firstName')?.value }} {{ profileForm.get('lastName')?.value }}
+          </h2>
+          <p class="profile-job">
+            {{ profileForm.get('jobTitle')?.value || 'Collaborateur' }}
+          </p>
+          <div class="profile-badges">
+            <span class="badge-admin" *ngIf="profileForm.get('role')?.value">{{ profileForm.get('role')?.value }}</span>
+            <span class="badge-active" *ngIf="profileForm.get('status')?.value">{{ profileForm.get('status')?.value }}</span>
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+    <article class="employee-card">
+      <div style="margin-bottom: 1.5rem;">
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-1">Informations Personnelles</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Mettez à jour vos coordonnées directes pour l'annuaire.</p>
+      </div>
+
+      <form class="employee-form" [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+        <div class="form-group">
+          <label for="firstName" class="form-label">Prénom</label>
+          <input id="firstName" type="text" formControlName="firstName" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label for="lastName" class="form-label">Nom</label>
+          <input id="lastName" type="text" formControlName="lastName" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Adresse Email</label>
+          <input id="email" type="email" formControlName="email" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label for="phone" class="form-label">Téléphone</label>
+          <input id="phone" type="text" formControlName="phone" class="form-input">
+        </div>
+
+        <div class="form-actions full-width">
+          <button type="button" class="btn btn--cancel" (click)="onCancelProfile()">Annuler</button>
+          <button type="submit" class="btn btn--save" [disabled]="profileForm.invalid">Enregistrer</button>
+        </div>
+      </form>
+    </article>
+
+    <article class="employee-card">
+      <div style="margin-bottom: 1.5rem;">
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-1">Détails Professionnels</h3>
+        @if (isAdminUser && isEditingSelectedEmployee) {
+          <p class="text-sm text-green-600 dark:text-green-400 font-medium">✏️ Mode Édition : Mettez à jour les détails de l'employé</p>
+        } @else {
+          <p class="text-sm text-amber-600 dark:text-amber-500 font-medium">🔒 Section verrouillée — Gérée par les RH</p>
+        }
+      </div>
+
+      @if (isAdminUser) {
+        <div style="margin-bottom: 1.5rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 1.5rem;">
+          <h4 class="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">Recherche rapide de collaborateurs :</h4>
+          
+          <div class="filters-container">
+            <input
+              type="text"
+              placeholder="🔍 Rechercher un employé..."
+              class="filter-input"
+              [(ngModel)]="searchQuery"
+              [ngModelOptions]="{standalone: true}"
+              (input)="showDropdown = true; applyFilters()"
+            />
+
+            <!-- CORRIGÉ : affichage du nom du département (dept.name) au lieu de l'objet entier,
+                 et value basé sur le nom pour matcher applyFilters() qui compare par nom -->
+            <select
+              class="filter-select"
+              [(ngModel)]="selectedDepartment"
+              [ngModelOptions]="{standalone: true}"
+              (ngModelChange)="applyFilters()"
+            >
+              <option value="">Tous les départements</option>
+              @for (dept of allDepartments; track dept._id) {
+                <option [value]="dept.name">{{ dept.name }}</option>
+              }
+            </select>
+          </div>
+
+          @if (showDropdown && searchQuery.trim() !== '') {
+            <div class="search-results-list">
+              @for (emp of filteredEmployees; track emp.id) {
+                <div class="search-result-item" (click)="goToEditEmployee(emp.id)">
+                  <span class="result-name">{{ emp.name }}</span>
+                  <span class="result-meta">{{ emp.email }} — {{ emp.department }}</span>
+                </div>
+              } @empty {
+                <p class="text-sm text-slate-500 dark:text-slate-400" style="padding: 0.5rem 0;">Aucun résultat trouvé.</p>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <form class="employee-form" [formGroup]="profileForm" (ngSubmit)="isAdminUser ? onSaveProfessionalDetails() : null">
+        
+        <div class="form-group">
+          <label class="form-label">Poste Occupé</label>
+          <input
+            type="text"
+            formControlName="jobTitle"
+            class="form-input"
+            [readonly]="isProDetailsReadonly"
+            [style.cursor]="isProDetailsReadonly ? 'not-allowed' : 'text'"
+            [style.opacity]="isProDetailsReadonly ? 0.8 : 1"
+            [style.background-color]="isProDetailsReadonly ? 'rgba(0,0,0,0.05)' : 'transparent'"
+          >
+        </div>
+        
+        @if (isAdminUser && !isEditingSelectedEmployee) {
+          <div class="form-group">
+            <label class="form-label">Département</label>
+            <input
+              type="text"
+              formControlName="department"
+              class="form-input"
+              readonly
+              style="cursor: not-allowed; opacity: 0.8; background-color: rgba(0,0,0,0.05);"
+            >
+          </div>
+        } @else {
+          <div class="form-group">
+            <label class="form-label">Département</label>
+            <select formControlName="department" class="form-input"
+                    [style.cursor]="isProDetailsReadonly ? 'not-allowed' : 'pointer'"
+                    [style.pointer-events]="isProDetailsReadonly ? 'none' : 'auto'"
+                    [style.opacity]="isProDetailsReadonly ? 0.8 : 1"
+                    [style.background-color]="isProDetailsReadonly ? 'rgba(0,0,0,0.05)' : 'pointer-events: none'">
+              <!-- CORRIGÉ : suppression de la classe "filters-container" qui masquait le texte de l'option -->
+              <option value="" disabled>Sélectionnez un département</option>
+              @for (dept of allDepartments; track dept._id) {
+                <option [value]="dept._id">{{ dept.name }}</option>
+              }
+            </select>
+          </div>
+        }
+        
+        <div class="form-group">
+          <label class="form-label">Salaire Annuel Brut (DT)</label>
+          <input type="number" formControlName="salary" class="form-input" 
+                 [readonly]="isProDetailsReadonly" 
+                 [style.cursor]="isProDetailsReadonly ? 'not-allowed' : 'text'"
+                 [style.opacity]="isProDetailsReadonly ? 0.8 : 1"
+                 [style.background-color]="isProDetailsReadonly ? 'rgba(0,0,0,0.05)' : 'transparent'"
+                 min="0" step="100">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Date d'embauche</label>
+          <input type="text" formControlName="joinDate" class="form-input" 
+                 readonly 
+                 style="cursor: not-allowed; opacity: 0.8; background-color: rgba(0,0,0,0.05);">
+        </div>
+
+        @if (isAdminUser) {
+          <div class="form-actions full-width" style="margin-top: 1rem;">
+            <button type="button" class="btn btn--cancel" *ngIf="isEditingSelectedEmployee" (click)="cancelEmployeeEdition()">Annuler l'édition</button>
+            <button type="submit" class="btn btn--save" *ngIf="isEditingSelectedEmployee">Mettre à jour l'employé</button>
+          </div>
+        }
+      </form>
+
+    </article>
+
+    <article class="employee-card">
+      <div style="margin-bottom: 1.5rem;">
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-1">Sécurité du compte</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Modifiez votre mot de passe régulièrement.</p>
+      </div>
+
+      <form class="employee-form" [formGroup]="passwordForm" (ngSubmit)="onSavePassword()">
+        <div class="form-group full-width">
+          <label for="currentPassword" class="form-label">Mot de passe actuel</label>
+          <input id="currentPassword" type="password" formControlName="currentPassword" class="form-input" placeholder="••••••••">
+        </div>
+        <div class="form-group full-width">
+          <label for="newPassword" class="form-label">Nouveau mot de passe</label>
+          <input id="newPassword" type="password" formControlName="newPassword" class="form-input" placeholder="6 caractères minimum">
+        </div>
+        <div class="form-group full-width">
+          <label for="confirmPassword" class="form-label">Confirmer le nouveau mot de passe</label>
+          <input id="confirmPassword" type="password" formControlName="confirmPassword" class="form-input" placeholder="••••••••">
+        </div>
+
+        <div class="form-actions full-width">
+          <button type="button" class="btn btn--cancel" (click)="passwordForm.reset()">Réinitialiser</button>
+          <button type="submit" class="btn btn--save" [disabled]="passwordForm.invalid">Actualiser le mot de passe</button>
+        </div>
+      </form>
+    </article>
+
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<article class="employee-card animate-fade-in" aria-labelledby="attendance-form-title">
+  <header class="employee-card__header">
+    <h1 id="attendance-form-title" class="employee-card__title">Ajouter un Pointage</h1>
+    <p class="employee-card__description">Renseignez les détails du registre de présence pour l'employé sélectionné.</p>
+  </header>
+
+  <form class="employee-form" [formGroup]="attendanceForm" (ngSubmit)="onSubmit()" novalidate>
+
+    <div class="form-group full-width">
+      <label for="employeeId" class="form-label">Employé <span class="required">*</span></label>
+      <select id="employeeId" class="form-select" formControlName="employeeId">
+        <option value="" disabled selected>-- Choisir un employé --</option>
+        @for (emp of employeesList; track emp._id) {
+          <option [value]="emp._id">{{ emp.firstName }} {{ emp.lastName }} ({{ emp.role }})</option>
+        }
+      </select>
+      <span class="error-text" *ngIf="attendanceForm.get('employeeId')?.touched && attendanceForm.get('employeeId')?.invalid">
+        Veuillez sélectionner un employé
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="date" class="form-label">Date d'enregistrement <span class="required">*</span></label>
+      <input type="date" id="date" formControlName="date" class="form-input" [class.dark-calendar]="isDarkMode">
+      <span class="error-text" *ngIf="attendanceForm.get('date')?.touched && attendanceForm.get('date')?.invalid">
+        La date est requise
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="status" class="form-label">Statut de la journée <span class="required">*</span></label>
+      <select id="status" formControlName="status" class="form-select">
+        <option value="" disabled selected>-- Choisir un statut --</option>
+        <option value="PRESENT">Présent</option>
+        <option value="ABSENT">Absent</option>
+        <option value="LATE">En retard</option>
+        <option value="HALF_DAY">Demi-journée</option>
+      </select>
+      <span class="error-text" *ngIf="attendanceForm.get('status')?.touched && attendanceForm.get('status')?.invalid">
+        Veuillez sélectionner un statut
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="checkIn" class="form-label">
+        Heure d'arrivée (Check-In) 
+        <span class="required" *ngIf="attendanceForm.get('status')?.value !== 'ABSENT'">*</span>
+      </label>
+      <input type="time" id="checkIn" formControlName="checkIn" class="form-input" [class.dark-calendar]="isDarkMode" [disabled]="attendanceForm.get('status')?.value === 'ABSENT'">
+      <span class="error-text" *ngIf="attendanceForm.get('checkIn')?.touched && attendanceForm.get('checkIn')?.invalid">
+        L'heure d'arrivée est obligatoire
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="checkOut" class="form-label">Heure de départ (Check-Out)</label>
+      <input type="time" id="checkOut" formControlName="checkOut" class="form-input" [class.dark-calendar]="isDarkMode" [disabled]="attendanceForm.get('status')?.value === 'ABSENT'">
+    </div>
+
+    <div class="form-group full-width">
+      <label for="notes" class="form-label">Notes Additionnelles</label>
+      <textarea id="notes" formControlName="notes" class="form-input textarea-input" rows="4" placeholder="Ajoutez des notes ou des commentaires (optionnel)"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn--cancel" routerLink="/home/attendance">Annuler</button>
+      <button type="submit" class="btn btn--save" [disabled]="attendanceForm.invalid">Enregistrer</button>
+    </div>
+
+  </form>
+</article>

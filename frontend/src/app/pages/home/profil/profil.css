@@ -1,0 +1,444 @@
+/* ==========================================================================
+   STRUCTURE GLOBALE
+   ========================================================================== */
+:host {
+  display: block;
+  width: 100%;
+}
+
+.background-gradient {
+  background: var(--bg-page);
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+}
+
+/* ==========================================================================
+   CARTE (IDENTIQUE À "AJOUT EMPLOYÉ")
+   ========================================================================== */
+.employee-card {
+  width: 100%;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.employee-card:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   AVATAR
+   ========================================================================== */
+.avatar-container {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+}
+
+.avatar-image {
+  width: 96px;
+  height: 96px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 3px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  display: block;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* le bouton caméra utilise déjà les classes Tailwind bg-blue-600 etc dans le HTML,
+   mais on l'aligne proprement sur var(--primary) pour rester cohérent avec le thème */
+.avatar-container label {
+  background-color: var(--primary) !important;
+  border: 2px solid var(--bg-surface);
+}
+
+.avatar-container label:hover {
+  filter: brightness(1.1);
+}
+
+/* ==========================================================================
+   FORMULAIRE — GRILLE 2 COLONNES
+   ========================================================================== */
+.employee-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 2rem;
+  row-gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   CHAMPS DE SAISIE
+   ========================================================================== */
+.form-input {
+  width: 100%;
+  background-color: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  padding: 0.875rem 1.25rem;
+  color: var(--text-main);
+  font-size: 0.9375rem;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 12%, transparent);
+  background-color: var(--bg-surface);
+}
+
+.form-input.readonly {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-style: dashed;
+  background-color: var(--bg-page);
+}
+
+/* ==========================================================================
+   BOUTONS
+   ========================================================================== */
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  border-radius: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.btn--cancel {
+  background-color: transparent;
+  border-color: var(--border);
+  color: var(--text-main);
+}
+
+.btn--cancel:hover:not(:disabled) {
+  background-color: var(--bg-page);
+  border-color: var(--text-muted);
+}
+
+.btn--save {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.btn--save:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   BADGES
+   ========================================================================== */
+.badge-admin {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.badge-active {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   RESPONSIVE MOBILE
+   ========================================================================== */
+@media (max-width: 768px) {
+  .employee-card {
+    padding: 1.5rem;
+  }
+  .employee-form {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .full-width {
+    grid-column: span 1;
+  }
+}
+/* ==========================================================================
+   EN-TÊTE PROFIL — disposition horizontale compacte
+   ========================================================================== */
+.profile-header-card {
+  padding: 1.5rem !important;
+}
+
+.profile-header-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   AVATAR
+   -------------------------------------------------------------------------- */
+.profile-header-row .avatar-container {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.profile-header-row .avatar-image {
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 3px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  display: block;
+}
+
+/* Bouton caméra superposé en bas à droite de l'avatar */
+.avatar-upload-btn {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 26px;
+  height: 26px;
+  background-color: var(--primary);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid var(--bg-surface);
+  color: #ffffff;
+  transition: filter 0.2s ease;
+  z-index: 2;
+}
+
+.avatar-upload-btn:hover {
+  filter: brightness(1.1);
+}
+
+.avatar-upload-btn svg {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
+
+/* Cache totalement l'input natif (remplace l'ancienne classe Tailwind "hidden" qui ne s'appliquait pas) */
+.avatar-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   IDENTITÉ (NOM / POSTE / BADGES)
+   -------------------------------------------------------------------------- */
+.profile-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.profile-job {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.profile-badges {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.profile-badges .badge-admin,
+.profile-badges .badge-active {
+  font-size: 0.6875rem;
+  padding: 0.2rem 0.625rem;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE MOBILE — reste horizontal, juste plus compact
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .profile-header-row {
+    gap: 0.875rem;
+  }
+  .profile-header-row .avatar-container {
+    width: 56px;
+    height: 56px;
+  }
+  .profile-header-row .avatar-image {
+    width: 56px;
+    height: 56px;
+  }
+  .profile-name {
+    font-size: 1.05rem;
+  }
+}
+/* ============================================= */
+/* AJOUT: barre de recherche visible admin uniquement (repris de employees.css) */
+/* ============================================= */
+
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-input,
+.filter-select {
+  padding: 0.875rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.filter-input {
+  flex: 1;
+  min-width: 250px;
+}
+
+.filter-select {
+  min-width: 220px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.25rem center;
+  padding-right: 3rem;
+}
+
+.filter-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 12%, transparent);
+  background-color: var(--bg-surface);
+}
+
+/* AJOUT: liste des résultats de recherche */
+.search-results-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-result-item:hover {
+  border-color: var(--primary);
+  background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.result-name {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.result-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Version Mobile */
+@media (max-width: 768px) {
+  .filter-input, .filter-select { min-width: 100%; }
+}

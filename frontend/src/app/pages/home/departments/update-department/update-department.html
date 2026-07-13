@@ -1,0 +1,112 @@
+<div class="form-container">
+  
+  <div class="form-header">
+    <h2 class="form-header__title">
+      {{ isDarkMode ? 'Modifier le département' : 'Ajouter un département' }}
+    </h2>
+    <p class="form-header__description">
+      {{ isDarkMode
+        ? 'Modifiez les informations du département ci-dessous.'
+        : 'Créez un nouveau département en remplissant les informations ci-dessous.'
+      }}
+    </p>
+  </div>
+
+  <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+    <div class="form-body">
+
+      <div class="form-group">
+        <label class="form-label" for="departmentName">
+          Nom du département <span class="form-label__required">*</span>
+        </label>
+        <input
+          id="departmentName"
+          class="form-control"
+          type="text"
+          formControlName="name"
+          placeholder="Ex : Ressources Humaines"
+        />
+      </div>
+
+      <div class="form-group form-group--full">
+        <label class="form-label" for="departmentDescription">
+          Description
+        </label>
+        <textarea
+          id="departmentDescription"
+          class="form-control"
+          formControlName="description"
+          placeholder="Décrivez le rôle et les missions de ce département..."
+        ></textarea>
+      </div>
+
+      <div class="form-row-grid">
+        
+        <div class="form-group">
+          <label class="form-label" for="departmentManager">
+            Responsable
+          </label>
+          <select
+            id="departmentManager"
+            class="form-control"
+            formControlName="managerId"
+          >
+            <option value="" disabled selected>Sélectionnez un responsable</option>
+            <option *ngFor="let employee of employees" [value]="employee.id">
+              {{ employee.fullName }} — {{ employee.role }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group custom-dropdown-container">
+          <label class="form-label">
+            Membres
+          </label>
+          
+          <div 
+            class="form-control custom-dropdown-trigger" 
+            [class.custom-dropdown-trigger--open]="isMembersDropdownOpen"
+            (click)="toggleMembersDropdown($event)"
+          >
+            <span class="trigger-text">{{ getSelectedMembersText() }}</span>
+            <span class="trigger-arrow"></span>
+          </div>
+
+          <div class="custom-dropdown-menu" *ngIf="isMembersDropdownOpen" (click)="$event.stopPropagation()">
+            <div 
+              *ngFor="let employee of employees" 
+              class="dropdown-item"
+              (click)="toggleMemberSelection(employee.id)"
+            >
+              <input 
+                type="checkbox" 
+                class="dropdown-checkbox"
+                [checked]="isEmployeeSelected(employee.id)"
+                (click)="$event.stopPropagation(); toggleMemberSelection(employee.id)"
+              />
+              <span class="dropdown-item-text">
+                {{ employee.fullName }} <span class="dropdown-item-role">— {{ employee.role }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn--cancel" (click)="onCancel()">
+        Annuler
+      </button>
+      <button
+        type="submit"
+        class="btn btn--save"
+        [disabled]="departmentForm.invalid"
+      >
+        Enregistrer
+      </button>
+    </div>
+  </form>
+
+</div>

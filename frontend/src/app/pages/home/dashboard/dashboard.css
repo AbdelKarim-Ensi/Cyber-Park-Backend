@@ -1,0 +1,392 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* --- Wrapper global connecté à vos variables globales de thème --- */
+.dashboard-wrapper {
+  background: var(--bg-page, #0f172a);
+  min-height: 100vh;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.dashboard-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* --- Header --- */
+.dashboard-header {
+  margin-bottom: 2.5rem;
+}
+.dashboard-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-main, #ffffff);
+  margin-bottom: 0.5rem;
+}
+.dashboard-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+/* --- Grille Responsive --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+.dashboard-col-main, .dashboard-col-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+@media (max-width: 1024px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+/* --- Cartes Standardisées --- */
+.employee-card {
+  background-color: var(--bg-surface, #1e293b);
+  border: 1px solid var(--border, #334155);
+  border-radius: 1rem;
+}
+.card-padding {
+  padding: 2rem !important;
+}
+.card-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-main, #ffffff);
+  margin-bottom: 0.25rem;
+}
+.card-header p {
+  font-size: 0.875rem;
+  color: var(--text-muted, #94a3b8);
+  margin-bottom: 1.5rem;
+}
+
+/* =========================================================
+   ZONE CHRONOMÈTRE & LUMINESCENCE (GLOW EFFECT)
+   ========================================================= */
+.chrono-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0;
+}
+
+.timer-display {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 4.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #64748b);
+  margin-bottom: 2.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: none;
+}
+
+/* Lueur néon quand le chronomètre augmente */
+.timer-running {
+  color: #3b82f6; 
+  text-shadow: 0 0 30px rgba(59, 130, 246, 0.45);
+}
+
+/* Teinte ambre en mode pause */
+.timer-paused {
+  color: #f59e0b;
+  text-shadow: 0 0 30px rgba(245, 158, 11, 0.35);
+}
+
+/* --- Boutons d'actions --- */
+.chrono-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-chrono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.btn-chrono .icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* Bouton Démarrer / Reprendre (Bleu) */
+.btn-start {
+  background-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+.btn-start:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* Bouton Pause (Orange) */
+.btn-pause {
+  background-color: rgba(245, 158, 11, 0.12);
+  border: 1px solid #f59e0b;
+  color: #fbbf24;
+}
+.btn-pause:hover {
+  background-color: rgba(245, 158, 11, 0.22);
+}
+
+/* Bouton Arrêter (Neutre/Rouge) */
+.btn-stop {
+  background-color: transparent;
+  border: 1px solid var(--border, #334155);
+  color: var(--text-main, #cbd5e1);
+}
+.btn-stop:hover:not(:disabled) {
+  background-color: rgba(239, 68, 68, 0.12);
+  border-color: #ef4444;
+  color: #f87171;
+}
+.btn-stop:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted, #475569);
+}
+
+/* =========================================================
+   TABLEAUX, ANNONCES & CHECKBOXES
+   ========================================================= */
+.table-responsive { overflow-x: auto; }
+.dashboard-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+.dashboard-table th {
+  padding: 0.75rem 1rem;
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+}
+.dashboard-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.dashboard-table tr:hover td { background-color: rgba(255, 255, 255, 0.01); }
+.col-date, .col-time { color: var(--text-main, #e2e8f0); font-size: 0.875rem; }
+.col-time { font-family: monospace; }
+
+/* Badges */
+.badge-custom {
+  display: inline-flex;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.badge-blue { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.badge-purple { background-color: rgba(168, 85, 247, 0.15); color: #c084fc; }
+.badge-green { background-color: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.badge-yellow { background-color: rgba(234, 179, 8, 0.15); color: #facc15; }
+
+/* NOUVEAU : badges pour les événements de pause (n'affecte pas les badges existants) */
+.badge-orange { background-color: rgba(249, 115, 22, 0.15); color: #fb923c; }
+.badge-teal { background-color: rgba(20, 184, 166, 0.15); color: #2dd4bf; }
+
+/* Liste d'Annonces */
+.announcement-list { display: flex; flex-direction: column; gap: 1.25rem; }
+.announcement-item { border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 1rem; }
+.announcement-item:last-child { border-bottom: none; padding-bottom: 0; }
+.announcement-item h3 { font-size: 0.95rem; font-weight: 500; color: var(--text-main, #e2e8f0); margin-bottom: 0.25rem; }
+.announcement-date { display: block; font-size: 0.75rem; color: #3b82f6; margin-bottom: 0.5rem; }
+.announcement-item p { font-size: 0.875rem; color: var(--text-muted, #94a3b8); line-height: 1.5; }
+
+/* To-Do modernisé */
+.todo-list { display: flex; flex-direction: column; gap: 1rem; }
+.todo-item { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+.todo-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--border, #475569);
+  background-color: rgba(0, 0, 0, 0.1);
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.todo-checkbox:checked { background-color: #2563eb; border-color: #2563eb; }
+.todo-checkbox:checked::after { content: "✓"; color: white; font-size: 0.85rem; font-weight: bold; }
+.todo-label { font-size: 0.875rem; color: var(--text-main, #cbd5e1); }
+.todo-label.completed { color: var(--text-muted, #64748b); text-decoration: line-through; }
+/* ===== AJOUTS RESPONSIVE — n'écrasent aucune règle existante ===== */
+
+/* Bouton hamburger, caché par défaut (desktop) */
+.mobile-sidebar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border, #334155);
+  background: var(--bg-surface, #1e293b);
+  color: var(--text-main, #fff);
+  cursor: pointer;
+  margin-right: 0.75rem;
+}
+
+/* Tablette : 768px – 1199px */
+@media (max-width: 1199px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .card-padding { padding: 1.5rem !important; }
+}
+
+/* Mobile : < 768px */
+@media (max-width: 767px) {
+  .dashboard-wrapper { padding: 1rem; }
+  .dashboard-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .mobile-sidebar-toggle { display: flex; }
+  .dashboard-title { font-size: 1.5rem; }
+  .dashboard-subtitle { font-size: 0.9rem; }
+
+  .timer-display { font-size: 2.75rem; margin-bottom: 1.5rem; }
+  .chrono-actions { flex-direction: column; width: 100%; gap: 0.75rem; }
+  .btn-chrono { width: 100%; min-height: 44px; }
+
+  .card-padding { padding: 1.25rem !important; }
+  .dashboard-table th, .dashboard-table td { padding: 0.6rem; font-size: 0.8rem; }
+  .todo-checkbox, .btn-icon { min-width: 44px; min-height: 44px; }
+}
+/* =========================================
+   STYLE SPECIFIQUE TO-DO LIST
+   ========================================= */
+
+/* Champ d'ajout */
+.todo-input-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.todo-input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.todo-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+.todo-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  width: 42px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.todo-add-btn:hover {
+  background: color-mix(in srgb, var(--primary) 85%, black);
+}
+.todo-add-btn:active {
+  transform: scale(0.95);
+}
+
+/* Liste et éléments */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid rgba(150, 150, 150, 0.1);
+}
+
+.todo-item:last-child {
+  border-bottom: none;
+}
+
+.todo-item:hover {
+  background-color: color-mix(in srgb, var(--text-main) 3%, transparent);
+}
+
+.todo-checkbox {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  transition: color 0.3s, text-decoration 0.3s, opacity 0.3s;
+}
+
+/* L'EFFET TEXTE BARRÉ QUAND C'EST COMPLET */
+.todo-item.is-done .todo-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Bouton de suppression (visible au survol) */
+.todo-delete-btn {
+  background: transparent;
+  border: none;
+  color: var(--danger, #ef4444);
+  font-size: 0.8rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.todo-item:hover .todo-delete-btn {
+  opacity: 1;
+}
+
+.todo-delete-btn:hover {
+  background-color: color-mix(in srgb, var(--danger, #ef4444) 10%, transparent);
+}

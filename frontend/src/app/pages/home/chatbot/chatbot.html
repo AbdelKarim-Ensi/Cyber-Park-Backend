@@ -1,0 +1,56 @@
+<!-- AJOUT : bulle flottante toujours visible en bas à droite -->
+<button
+  class="chat-bubble"
+  [class.chat-bubble--open]="isOpen()"
+  (click)="toggleWidget()"
+  aria-label="Ouvrir l'assistant RH"
+>
+  <span *ngIf="!isOpen()">💬</span>
+  <span *ngIf="isOpen()">✕</span>
+</button>
+
+<!-- AJOUT : panneau de chat, affiché seulement si isOpen -->
+<div class="chat-panel" *ngIf="isOpen()">
+  <div class="chat-panel__header">
+    <span class="chat-panel__title">Assistant RH</span>
+    <span class="chat-panel__status">En ligne</span>
+  </div>
+
+  <div class="chat-panel__messages" #messagesContainer>
+    <div
+      *ngFor="let msg of messages()"
+      class="chat-message"
+      [class.chat-message--user]="msg.role === 'user'"
+      [class.chat-message--model]="msg.role === 'model'"
+      [class.chat-message--error]="msg.isError"
+    >
+      {{ msg.text }}
+    </div>
+
+    <!-- AJOUT : indicateur de frappe pendant le chargement -->
+    <div class="chat-message chat-message--model chat-message--typing" *ngIf="isLoading()">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  </div>
+
+  <div class="chat-panel__input">
+    <textarea
+      [ngModel]="currentInput()"
+      (ngModelChange)="currentInput.set($event)"
+      (keydown)="onKeydown($event)"
+      placeholder="Écrivez votre message..."
+      rows="1"
+      [disabled]="isLoading()"
+    ></textarea>
+    <button
+      class="chat-panel__send"
+      (click)="sendMessage()"
+      [disabled]="isLoading() || !currentInput().trim()"
+      aria-label="Envoyer"
+    >
+      ➤
+    </button>
+  </div>
+</div>

@@ -1,0 +1,163 @@
+/* ================= CONTENEUR PRINCIPAL ================= */
+:host {
+  display: block;
+  width: 100%; /*  */
+}
+
+.page-container {
+  padding: 2rem;
+  display: flex;
+  justify-content: center; /*  */
+}
+
+.employee-card {
+  width: 100%;
+  max-width: 820px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border); /* [cite: 32] */
+  border-radius: 1rem;
+  padding: 3rem;
+  box-sizing: border-box;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); /* [cite: 33] */
+}
+
+.employee-card__header {
+  margin-bottom: 2rem; /* [cite: 33] */
+}
+
+.employee-card__title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-main); /* [cite: 34] */
+}
+
+.employee-card__description {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-muted); /* [cite: 34] */
+}
+
+/* ================= LA GRILLE EN 2 COLONNES ================= */
+.project-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /*  */
+  gap: 1.5rem 2rem;
+}
+
+.full-width {
+  grid-column: 1 / -1; /* [cite: 36] */
+}
+
+/* ================= 🎯 INPUTS ET SELECTS ================= */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem; /* [cite: 37] */
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-main); /* [cite: 38] */
+}
+
+.required {
+  color: #ef4444; /* [cite: 38] */
+}
+
+.error-text {
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin-top: -0.25rem;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border: 1px solid var(--border); /* [cite: 39] */
+  border-radius: 0.625rem;
+  background-color: var(--bg-page);
+  color: var(--text-main); /* [cite: 40] */
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  transition: all 0.2s ease-in-out;
+  appearance: none; /* [cite: 41] */
+  box-sizing: border-box;
+}
+
+/* Flèche SVG personnalisée pour le Select */
+.form-select {
+  cursor: pointer;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.25rem center; /* [cite: 44] */
+  padding-right: 3rem;
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6; /* [cite: 45] */
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 12%, transparent); /* [cite: 46] */
+  background-color: var(--bg-surface);
+}
+
+.textarea-input {
+  height: auto;
+  padding: 1rem;
+  resize: vertical; /* [cite: 47] */
+}
+
+/* ================= BOUTONS D'ACTIONS ================= */
+.form-actions {
+  grid-column: 1 / -1; 
+  display: flex;
+  justify-content: flex-end; 
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border); /* [cite: 58] */
+}
+
+.btn {
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s; /* [cite: 59] */
+}
+
+.btn--cancel {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-main); /* [cite: 60] */
+}
+
+.btn--save {
+  background-color: var(--primary);
+  color: white; /* [cite: 60] */
+}
+
+.btn:hover {
+  opacity: 0.8; /* [cite: 61] */
+}
+
+/* ================= RESPONSIVE (MOBILE) ================= */
+@media (max-width: 768px) {
+  .project-form {
+    grid-template-columns: 1fr; /*  */
+  }
+  .employee-card {
+    padding: 1.5rem; /*  */
+  }
+}

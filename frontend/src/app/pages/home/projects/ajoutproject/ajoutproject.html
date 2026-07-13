@@ -1,0 +1,95 @@
+<div class="page-container">
+  
+  <div class="employee-card">
+    <div class="employee-card__header">
+      <h2 class="employee-card__title">Créer un projet</h2>
+      <p class="employee-card__description">
+        Renseignez les détails du nouveau projet.
+      </p>
+    </div>
+
+    <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="project-form">
+      
+      <div class="form-group">
+        <label class="form-label" for="name">Nom du projet <span class="required">*</span></label>
+        <input id="name" class="form-input" type="text" formControlName="name" placeholder="Ex: Refonte application mobile" />
+        <span class="error-text" *ngIf="projectForm.get('name')?.touched && projectForm.get('name')?.invalid" class="error-text">*Requis*</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="status">Statut <span class="required">*</span></label>
+        <!-- ✅ CORRIGÉ -->
+        <select id="status" class="form-select" formControlName="status">
+          <option value="" disabled>-- Choisir un statut --</option>
+          
+          <option value="PENDING">En attente (PENDING)</option>
+          <option value="IN_PROGRESS">En cours (IN_PROGRESS)</option>
+          <option value="ON_HOLD">En pause (ON_HOLD)</option>
+          <option value="COMPLETED">Terminé (COMPLETED)</option>
+          <span class="error-text" *ngIf="projectForm.get('status')?.touched && projectForm.get('status')?.invalid">
+  Requis
+</span>
+        </select>
+      </div>
+
+       <div class="form-group">
+  <label class="form-label" for="startDate">Date de début <span class="required">*</span></label>
+  <input 
+    id="startDate" 
+    class="form-input" 
+    type="date" 
+    formControlName="startDate" 
+    [class.dark-calendar]="isDarkMode" />
+    
+        <span class="error-text" *ngIf="projectForm.get('startDate')?.touched && projectForm.get('startDate')?.invalid">Requis*</span>
+</div>
+ <div class="form-group">
+  <label class="form-label" for="endDate">Date de fin (Optionnelle)</label>
+  <input 
+    id="endDate" 
+    class="form-input" 
+    type="date" 
+    formControlName="endDate" 
+    [class.dark-calendar]="isDarkMode" />
+</div>
+
+      <div class="form-group full-width">
+        <label class="form-label">Équipe assignée <span class="required">*</span></label>
+        <div class="team-list-container">
+          
+          <div class="team-member-row" 
+               *ngFor="let emp of employees" 
+               (click)="toggleEmployee(emp.id)"
+               [class.selected]="isEmployeeSelected(emp.id)">
+            
+            <div class="member-info">
+              <div class="avatar">{{ getInitials(emp.fullName) }}</div>
+              <div class="member-text">
+                <span class="member-name">{{ emp.fullName }}</span>
+                <span class="member-role">{{ emp.role }}</span>
+              </div>
+            </div>
+            
+            <div class="custom-checkbox" [class.checked]="isEmployeeSelected(emp.id)">
+              <svg *ngIf="isEmployeeSelected(emp.id)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label class="form-label" for="description">Description du projet <span class="required">*</span></label>
+        <textarea id="description" class="form-input textarea-input" formControlName="description" placeholder="Décrivez les objectifs, les livrables, etc..." rows="5"></textarea>
+        <span class="error-text" *ngIf="projectForm.get('description')?.touched && projectForm.get('description')?.invalid">Requis</span>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn--cancel" (click)="onCancel()">Annuler</button>
+        <button type="submit" class="btn btn--save" [disabled]="projectForm.invalid">Créer le projet</button>
+      </div>
+
+    </form>
+  </div>
+</div>

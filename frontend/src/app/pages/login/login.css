@@ -1,0 +1,358 @@
+/* Importation d'une police moderne (Inter) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:host {
+  display: block;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ==========================================================================
+   🎨 VARIABLES DE THÈMES (DARK & LIGHT)
+   ========================================================================== */
+
+/* Thème Sombre (Par défaut) */
+.dark-theme {
+  --bg-page: #020617;
+  --bg-card: #0f172a;
+  --border-card: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #64748b;
+  --text-label: #cbd5e1;
+  --bg-input: #1e293b;
+  --border-input: #334155;
+  --btn-submit-bg: #2563eb;
+  --btn-submit-hover: #3b82f6;
+  --toggle-bg: rgba(255, 255, 255, 0.05);
+  --toggle-border: rgba(255, 255, 255, 0.1);
+  --toggle-hover: rgba(255, 255, 255, 0.15);
+}
+
+/* Thème Clair */
+.light-theme {
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --border-card: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-label: #334155;
+  --bg-input: #ffffff;
+  --border-input: #cbd5e1;
+  --btn-submit-bg: #0f172a;
+  --btn-submit-hover: #1e293b;
+  --toggle-bg: rgba(0, 0, 0, 0.05);
+  --toggle-border: rgba(0, 0, 0, 0.08);
+  --toggle-hover: rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   🖥️ LAYOUT & STRUCTURE
+   ========================================================================== */
+
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-page);
+  padding: 1.5rem;
+  transition: background-color 0.3s ease;
+  position: relative;
+}
+
+.login-card {
+  background: var(--bg-card);
+  width: 100%;
+  max-width: 420px;
+  border-radius: 1rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-card);
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ==========================================================================
+   🌙☀️ FLOTATING THEME ICON (En haut à droite)
+   ========================================================================== */
+
+.theme-toggle-icon {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: var(--toggle-bg);
+  border: 1px solid var(--toggle-border);
+  font-size: 1.3rem;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.theme-toggle-icon:hover {
+  transform: scale(1.1);
+  background: var(--toggle-hover);
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2);
+}
+
+/* ==========================================================================
+   🏷️ COMPOSANTS DE LA CARTE
+   ========================================================================== */
+
+/* Logo */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.logo-box {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #2563eb;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-main);
+  transition: color 0.3s;
+}
+
+/* En-tête */
+.login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.login-header h1 {
+  color: var(--text-main);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  transition: color 0.3s;
+}
+
+.login-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Formulaire & Inputs */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-label);
+  transition: color 0.3s;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-input);
+  background-color: var(--bg-input);
+  font-size: 0.95rem;
+  color: var(--text-main);
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #2563eb;
+  background-color: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Validations & Erreurs */
+.form-group input.is-invalid {
+  border-color: #ef4444;
+}
+
+.form-group input.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.error-msg {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 0.25rem;
+}
+
+/* Options (Remember me & Forgot Password) */
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.remember-me input {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: #2563eb;
+}
+
+.forgot-link {
+  font-size: 0.875rem;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Bouton principal */
+.btn-submit {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--btn-submit-bg);
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: var(--btn-submit-hover);
+  transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Footer de carte */
+.register-prompt {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.register-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 0.25rem;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+  .theme-toggle-icon {
+    top: 16px;
+    right: 16px;
+  }
+}
+::ng-deep .swal2-popup {
+  border-radius: 1rem !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+/* AJOUT : séparateur "ou" */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #334155;
+}
+
+.divider span {
+  padding: 0 12px;
+}
+
+/* AJOUT : bouton Google */
+.btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dark-theme .btn-google {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #fff;
+}
+.dark-theme .btn-google:hover { background: #273549; }
+
+.light-theme .btn-google {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+.light-theme .btn-google:hover { background: #f8fafc; }
+
+.btn-google:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

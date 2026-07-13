@@ -1,0 +1,27 @@
+<div class="unsubscribe-page">
+  <div class="unsubscribe-card">
+    @switch (status()) {
+      @case ('loading') {
+        <div class="spinner" aria-hidden="true"></div>
+        <h2>Traitement en cours...</h2>
+        <p>Merci de patienter un instant.</p>
+      }
+      @case ('success') {
+        <div class="icon-badge icon-badge-success">
+          <app-icon [name]="'x'" [size]="24"></app-icon>
+        </div>
+        <h2>Vous avez été désabonné</h2>
+        <p>Vous ne recevrez plus les actualités Cyber Park. Vous pouvez vous réinscrire à tout moment depuis notre site.</p>
+        <a class="unsubscribe-button" routerLink="/">Retour à l'accueil</a>
+      }
+      @case ('error') {
+        <div class="icon-badge icon-badge-error">
+          <app-icon [name]="'x'" [size]="24"></app-icon>
+        </div>
+        <h2>Une erreur est survenue</h2>
+        <p>{{ errorMessage() }}</p>
+        <a class="unsubscribe-button" routerLink="/">Retour à l'accueil</a>
+      }
+    }
+  </div>
+</div>

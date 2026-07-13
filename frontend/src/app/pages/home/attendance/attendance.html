@@ -1,0 +1,105 @@
+<div class="module-container animate-fade-in">
+  
+  <div class="page-header">
+    <div class="page-title-section">
+      <h2>Pointage & Présences</h2>
+      <p class="page-subtitle">Consultez et gérez les présences de votre équipe</p>
+    </div>
+    <button class="btn-primary" routerLink="/home/attendance/ajout">
+      + Ajouter un pointage
+    </button>
+  </div>
+
+  <div class="controls-section">
+    
+    @if(isAdmin()){
+      <div class="search-bar">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" class="search-input" placeholder="🔍 Rechercher un employé..." [(ngModel)]="searchTerm" />
+    </div>
+
+    <div class="filters-container">
+      <div class="filter-item">
+        <input type="date" [class.dark-calendar]="isDarkMode" class="filter-input" title="Choisir une date" [(ngModel)]="filterDate" />
+      </div>
+      <div class="filter-item">
+        <select class="filter-input" title="Choisir un statut" [(ngModel)]="filterStatus">
+          <option value="ALL">Tous les statuts</option>
+          <option value="PRESENT">Présent</option>
+          <option value="ABSENT">Absent</option>
+          <option value="LATE">En retard</option>
+          <option value="HALF_DAY">Demi-journée</option>
+        </select>
+      </div>
+    </div>
+    }
+
+  </div>
+
+  <div class="attendance-grid">
+    
+    @for (record of filteredAttendances; track record._id) {
+      <article class="attendance-card">
+        
+        <div class="card-header">
+          <div class="employee-info">
+            <div class="avatar">{{ getInitials(record.employeeId) }}</div>
+            <div class="details">
+              <span class="name">{{ record.employeeId?.firstName }} {{ record.employeeId?.lastName }}</span>
+              <span class="role">{{ record.employeeId?.role || 'Employé' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="date-row">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span>{{ record.date | date:'dd MMM yyyy' }}</span>
+          </div>
+          
+          <div class="time-blocks">
+            <div class="time-box">
+              <span class="time-label">Check-In</span>
+              <span class="time-value text-green">{{ record.checkIn ? (record.checkIn | date:'HH:mm') : '--:--' }}</span>
+            </div>
+            <div class="time-divider"></div>
+            <div class="time-box">
+              <span class="time-label">Check-Out</span>
+              <span class="time-value text-red">{{ record.checkOut ? (record.checkOut | date:'HH:mm') : '--:--' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="status-badge-container">
+            @if (record.status === 'PRESENT') {
+              <span class="badge badge-success">PRÉSENT</span>
+            } @else if (record.status === 'ABSENT') {
+              <span class="badge badge-danger">ABSENT</span>
+            } @else if (record.status === 'LATE') {
+              <span class="badge badge-warning">EN RETARD</span>
+            } @else if (record.status === 'HALF_DAY') {
+              <span class="badge badge-info">DEMI-JOURNÉE</span>
+            }
+          </div>
+          
+          <div class="actions-container">
+            <button class="btn-icon" title="Voir la note" (click)="viewNote(record.notes)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </button>
+            <button class="btn-icon btn-edit" title="Modifier" (click)="onEdit(record._id)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+      </article>
+    } @empty {
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M7 7h10"></path><path d="M7 12h10"></path><path d="M7 17h6"></path></svg>
+        <p>Aucun pointage trouvé pour ces critères.</p>
+      </div>
+    }
+
+  </div>
+</div>

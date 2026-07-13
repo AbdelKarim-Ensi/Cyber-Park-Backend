@@ -1,0 +1,73 @@
+<div class="app-layout" [attr.data-theme]="isDarkMode ? 'dark' : 'light'">
+  <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="sidebar-logo">Cyber Park HR</div>
+    
+    <nav class="nav-menu">
+      <a routerLink="dashboard" routerLinkActive="active" class="nav-link">
+        <lucide-icon [img]="LayoutDashboard" class="nav-icon"></lucide-icon> <span>Dashboard</span>
+      </a>
+      <a *ngIf="userRole === 'admin' || userRole === 'ADMIN'" routerLink="employees" routerLinkActive="active" class="nav-link">
+        <lucide-icon [img]="Users" class="nav-icon"></lucide-icon> <span>Employés</span>
+      </a>
+      <a routerLink="departments" routerLinkActive="active" class="nav-link">
+        <lucide-icon [img]="Network" class="nav-icon"></lucide-icon> <span>Départements</span>
+      </a>
+      <a routerLink="projects" routerLinkActive="active" class="nav-link">
+        <lucide-icon [img]="Folder" class="nav-icon"></lucide-icon> <span>Projets</span>
+      </a>
+      <a *ngIf="userRole === 'admin' || userRole === 'ADMIN'" routerLink="attendance" routerLinkActive="active" class="nav-link">
+        <lucide-icon [img]="Clock" class="nav-icon"></lucide-icon> <span>Présences</span>
+      </a>
+      <a routerLink="leaves" routerLinkActive="active" class="nav-link">
+        <lucide-icon [img]="Calendar" class="nav-icon"></lucide-icon> <span>Congés</span>
+      </a>
+      <a routerLink="salaryAdvances" routerLinkActive="active" class="nav-link">
+        <lucide-icon [img]="DollarSign" class="nav-icon"></lucide-icon> <span>Avances / Salaires</span>
+      </a>
+      <a routerLink="announcements" routerLinkActive="active" class="nav-link">
+        <lucide-icon [img]="Megaphone" class="nav-icon"></lucide-icon> <span>Annonces</span>
+      </a>
+      <a routerLink="profil" routerLinkActive="active" class="nav-link">
+        <lucide-icon [img]="User" class="nav-icon"></lucide-icon> 
+        <span>Profil</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">
+        <lucide-icon [img]="LogOut" class="nav-icon"></lucide-icon> <span>Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-navbar">
+      <button class="btn-hamburger" (click)="toggleSidebar()">
+        <lucide-icon [img]="Menu" class="nav-icon"></lucide-icon>
+      </button>
+
+      <h2 class="page-title">{{ currentTitle }}</h2>
+      <div class="header-actions">
+        
+        <button class="btn-theme" (click)="toggleTheme()">
+          <lucide-icon [img]="isDarkMode ? Sun : Moon"></lucide-icon>
+        </button>
+        
+        <div class="user-profile">
+          <div class="avatar" [class.avatar--has-image]="userAvatar">
+            <img *ngIf="userAvatar; else initialFallback" [src]="userAvatar" alt="Avatar" class="avatar-img">
+            <ng-template #initialFallback>{{ userFirstName.charAt(0).toUpperCase() }}</ng-template>
+          </div>
+          <span class="user-name">{{ userFirstName }}</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="router-container">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <!-- AJOUT : widget chatbot RH flottant, visible sur toutes les pages du layout home -->
+  <app-chatbot></app-chatbot>
+</div>

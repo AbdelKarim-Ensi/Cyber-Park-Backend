@@ -1,0 +1,75 @@
+<article class="employee-card" aria-labelledby="employee-form-title">
+  <header class="employee-card__header">
+    <h1 id="employee-form-title" class="employee-card__title">Ajouter un employé</h1>
+    <p class="employee-card__description">Remplissez les informations ci-dessous pour créer la fiche de l'employé.</p>
+  </header>
+
+  <form class="employee-form" [formGroup]="employeeForm" (ngSubmit)="onSubmit()" novalidate>
+
+    <div class="form-group">
+      <label for="firstName" class="form-label">Prénom</label>
+      <input type="text" id="firstName" formControlName="firstName" class="form-input" placeholder="Ex. Marie" autocomplete="given-name">
+    </div>
+
+    <div class="form-group">
+      <label for="lastName" class="form-label">Nom</label>
+      <input type="text" id="lastName" formControlName="lastName" class="form-input" placeholder="Ex. Dupont" autocomplete="family-name">
+    </div>
+
+    <div class="form-group">
+      <label for="email" class="form-label">Email professionnel</label>
+      <input type="email" id="email" formControlName="email" class="form-input" placeholder="marie.dupont@entreprise.fr" autocomplete="email">
+    </div>
+
+    <!-- ✅ CHANGEMENT 1 : input → select pour le poste -->
+    <div class="form-group">
+      <label for="role" class="form-label">Poste / Rôle</label>
+      <select id="role" formControlName="role" class="form-select">
+        <option value="" disabled>Sélectionnez un poste</option>
+        <option value="Développeur Front-end">Développeur Front-end</option>
+        <option value="Développeur Back-end">Développeur Back-end</option>
+        <option value="Développeur Full-stack">Développeur Full-stack</option>
+        <option value="Designer UI/UX">Designer UI/UX</option>
+        <option value="Chef de projet">Chef de projet</option>
+        <option value="Responsable RH">Responsable RH</option>
+        <option value="Comptable">Comptable</option>
+        <option value="Commercial">Commercial</option>
+        <option value="MANAGER">Manager</option>
+      </select>
+    </div>
+
+    <!-- ✅ CHANGEMENT 2 : options dynamiques depuis MongoDB -->
+    <div class="form-group">
+      <label for="department" class="form-label">Département</label>
+      <select id="department" formControlName="department" class="form-select">
+        <option value="" disabled>Sélectionnez un département</option>
+        @for (dept of departments; track dept._id) {
+          <option [value]="dept._id">{{ dept.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="hireDate" class="form-label">Date d'embauche </label>
+      <input type="date" id="hireDate" formControlName="hireDate" class="form-input" [class.dark-calendar]="isDarkMode">
+      <small *ngIf="employeeForm.get('hireDate')?.touched && employeeForm.get('hireDate')?.invalid" class="error-text">
+    La date de début est requise.
+  </small>
+    </div>
+
+    <div class="form-group">
+      <label for="status" class="form-label">Statut</label>
+      <select id="status" formControlName="status" class="form-select">
+        <option value="" disabled>Sélectionnez un statut</option>
+        <option value="ACTIVE">Actif</option>
+        <option value="INACTIVE">Inactif</option>
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn--cancel" (click)="onCancel()">Annuler</button>
+      <button type="submit" class="btn btn--save" [disabled]="employeeForm.invalid">Enregistrer</button>
+    </div>
+
+  </form>
+</article>

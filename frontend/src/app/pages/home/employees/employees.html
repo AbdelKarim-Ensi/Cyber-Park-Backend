@@ -1,0 +1,83 @@
+<div class="module-container">
+  
+  <div class="page-header">
+    <div class="page-title-section">
+      <h2>Annuaire du personnel</h2>
+    </div>
+    <button class="btn-primary" (click)="addEmployee()">+ Nouvel Employé</button>
+  </div>
+
+  <div class="filters-container">
+    <input 
+      type="text" 
+      placeholder="🔍 Rechercher un employé..." 
+      class="filter-input" 
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="applyFilters()"
+    />
+  
+    <select 
+      class="filter-select"
+      [(ngModel)]="selectedDepartment"
+      (ngModelChange)="applyFilters()"
+    >
+      <option value="">Tous les départements</option>
+      @for (dept of departmentsList; track dept) {
+        <option [value]="dept">{{ dept }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="grid-cards">
+    @for (emp of filteredEmployees; track emp.id) {
+      <div class="card">
+        
+        <div class="card-header">
+          <div class="user-cell">
+            <div class="avatar-sm">
+              {{ emp.name ? emp.name.charAt(0).toUpperCase() : '?' }}
+            </div>
+            <div class="user-info-text">
+              <span class="user-name">{{ emp.name }}</span>
+              <span class="user-meta">{{ emp.email }}</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn-icon btn-edit" (click)="editUser(emp.id)">✎</button>
+            <button class="btn-icon btn-delete" (click)="deleteUser(emp.id)">🗑</button>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <div class="info-row">
+            <span class="label">Poste</span>
+            <span class="value-text">{{ emp.role }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Département</span>
+            <span class="value-text">{{ emp.department }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Date d'embauche</span>
+            <span class="value-text">{{ emp.date }}</span>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <span class="label">Statut</span>
+          <span class="badge" 
+                [class.badge-success]="emp.status === 'Actif' || emp.status === 'ACTIVE' || emp.status === 'active'"
+                [class.badge-danger]="emp.status === 'Inactif' || emp.status === 'INACTIVE' || emp.status === 'inactive'">
+            {{ emp.status === 'ACTIVE' || emp.status === 'Actif' ? 'Actif' : 'Inactif' }}
+          </span>
+        </div>
+        
+      </div>
+    } @empty {
+      <div style="text-align: center; color: var(--text-muted); grid-column: 1 / -1; padding: 3rem;">
+        <p>Aucun employé trouvé pour cette recherche.</p>
+      </div>
+    }
+  </div>
+
+</div>

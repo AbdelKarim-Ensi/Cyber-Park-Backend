@@ -1,0 +1,218 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.module-container {
+  padding: 2rem;
+  max-width: 800px; /* Réduit pour donner un effet de formulaire centré et élégant */
+  margin: 0 auto;
+}
+
+/* ===================================================
+   EN-TÊTE DE LA PAGE
+   =================================================== */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-title-section h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0 0 0.5rem 0;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Bouton Retour Général */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.625rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+.btn-secondary:hover {
+  background-color: rgba(156, 163, 175, 0.1);
+}
+
+/* ===================================================
+   CARTE ET LOGIQUE DU FORMULAIRE
+   =================================================== */
+.form-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.form-title {
+  margin: 0 0 1.5rem 0;
+  color: var(--text-main);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.custom-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.form-input {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  outline: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+}
+
+textarea.form-input {
+  resize: vertical;
+}
+
+/* Actions en bas de formulaire (Boutons Soumettre / Annuler) */
+.form-actions-form {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-submit {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background-color: #64748b;
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+.btn-cancel:hover {
+  opacity: 0.9;
+}
+
+/* Animation douce à l'ouverture */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ===================================================
+   ICÔNE CALENDRIER — THÈME CLAIR / SOMBRE
+   AJOUT: sorti du @media pour s'appliquer aussi en desktop, pas seulement en mobile
+   =================================================== */
+/* 💡 Par défaut (Mode Clair) */
+.form-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0);
+  transition: filter 0.2s ease-in-out;
+}
+
+/* 🎯 Mode Sombre automatique (Détecte si .dark est présent sur html ou body) */
+:host-context(.dark) .form-input::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(100%) contrast(100%) !important;
+}
+
+/* ===================================================
+   RESPONSIVE (MOBILE)
+   =================================================== */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .form-actions-form {
+    flex-direction: column-reverse;
+  }
+  .btn-submit, .btn-cancel {
+    width: 100%;
+  }
+}
+
+/* AJOUT: style identique au message d'erreur de la date d'embauche */
+.error-text {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: block;
+  font-weight: 400;
+}
