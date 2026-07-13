@@ -1,11 +1,10 @@
-
-```
-backend
-├─ config
-│  ├─ authConfig.js
-│  ├─ connect.js
-│  └─ firebase-admin.js
-├─ controllers
+backend/
+├─ config/
+│  ├─ authConfig.js         Configuration de l'authentification
+│  ├─ connect.js            Connexion MongoDB Atlas (résolution DNS ipv4first)
+│  └─ firebase-admin.js     Initialisation Firebase Admin SDK
+│
+├─ controllers/             Logique métier par ressource
 │  ├─ announcement.controller.js
 │  ├─ attendance.controller.js
 │  ├─ auth.controller.js
@@ -18,13 +17,16 @@ backend
 │  ├─ project.controller.js
 │  ├─ salaryAdvance.controller.js
 │  └─ subscriber.controller.js
-├─ jobs
-│  └─ attendance.cron.js
-├─ middleware
-│  ├─ auth.middleware.js
-│  ├─ role.middleware.js
-│  └─ sanitize.middleware.js
-├─ models
+│
+├─ jobs/
+│  └─ attendance.cron.js    Tâche planifiée liée aux présences
+│
+├─ middleware/
+│  ├─ auth.middleware.js    Vérification du token Firebase
+│  ├─ role.middleware.js    Contrôle d'accès selon le rôle (ADMIN/EMPLOYEE)
+│  └─ sanitize.middleware.js Protection XSS (middleware custom basé sur `xss`)
+│
+├─ models/                  Schémas Mongoose
 │  ├─ announcement.model.js
 │  ├─ attendance.model.js
 │  ├─ department.model.js
@@ -33,10 +35,8 @@ backend
 │  ├─ salaryAdvance.model.js
 │  ├─ subscriber.model.js
 │  └─ user.model.js
-├─ package-lock.json
-├─ package.json
-├─ README.md
-├─ routes
+│
+├─ routes/                  Définition des endpoints (montés sans préfixe /api)
 │  ├─ announcement.routes.js
 │  ├─ attendance.routes.js
 │  ├─ auth.routes.js
@@ -49,12 +49,14 @@ backend
 │  ├─ project.routes.js
 │  ├─ salaryAdvance.routes.js
 │  └─ subscriber.routes.js
-├─ script
-│  └─ seedAdmin.js
-├─ server.js
-├─ test
-│  └─ login-test.js
-└─ utils
-   └─ mailer.js
-
-```
+│
+├─ script/
+│  └─ seedAdmin.js          Script de création d'un compte admin initial
+│
+├─ test/
+│  └─ login-test.js         Test du flux de connexion
+│
+├─ utils/
+│  └─ mailer.js             Envoi d'emails (fire-and-forget)
+│
+└─ server.js                 Point d'entrée de l'application
