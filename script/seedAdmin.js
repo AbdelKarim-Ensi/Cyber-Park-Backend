@@ -15,7 +15,12 @@ const ADMINS_TO_CREATE = [
     firstName: "Admin",
     lastName: "Cyber Park"
   },
-  // Ajoute d'autres objets ici si besoin
+  {
+    email: "akd@gmail.com",
+    password: "123456789",
+    firstName: "Admin",
+    lastName: "Test Cypress"
+  },
 ];
 
 async function seedAdmins() {

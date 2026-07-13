@@ -4,7 +4,7 @@ const attendanceController = require("../controllers/attendance.controller");
 const protect = require("../middleware/auth.middleware");
 const authorizeRoles = require("../middleware/role.middleware");
 
-// Sécurisation globale : Connexion obligatoire
+
 router.use(protect);
 
 // Routes réservées aux employés (et admins)
